@@ -1,0 +1,8 @@
+*.log
+build
+dist
+chroma.db
+venv
+file_store
+.mcdata
+__pycache__

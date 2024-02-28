@@ -1,0 +1,6 @@
+argparse
+chromadb
+fastapi
+python-multipart
+sentence_transformers
+uvicorn

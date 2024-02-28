@@ -48,7 +48,7 @@ To set up your development environment, navigate to the root of the repository a
 
 ```bash
 # Create a virtual environment
-python -m venv venv
+python3.11 -m venv venv
 
 # Activate the virtual environment
 source venv/bin/activate
@@ -60,7 +60,7 @@ pip install -r requirements.txt
 Then, run the application:
 
 ```bash
-python -m api.v1.main
+python -m memory_cache.server.main
 ```
 
 Memory Cache Hub will start and you can navigate to [http://localhost:4444](http://localhost:4444) in your browser to access the GUI.
@@ -68,7 +68,7 @@ Memory Cache Hub will start and you can navigate to [http://localhost:4444](http
 Memory Cache Hub accepts several command-line arguments to customize its behavior. You can see a list of available arguments by running:
 
 ``` sh
-python -m api.v1.main --help
+python -m memory_cache.server.main --help
 ```
 
 ## Building for Release
