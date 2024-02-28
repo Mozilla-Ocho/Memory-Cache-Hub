@@ -1,10 +1,10 @@
 # Memory Cache Hub
 
-Memory Cache Hub is a backend server for [Memory Cache](https://github.com/Mozilla-Ocho/Memory-Cache).
+A backend server for [Memory Cache](https://github.com/Mozilla-Ocho/Memory-Cache).
 
 ## Overview
 
-Memory Cache Hub is a central component of Memory Cache:
+Memory Cache Hub is a core component of Memory Cache:
 
 - It exposes APIs used by the browser extension, browser client, and plugins.
 - It serves static files including the browser client and various project artifacts.
@@ -60,7 +60,7 @@ pip install -r requirements.txt
 Then, run the application:
 
 ```bash
-python -m memory_cache.server.main
+python -m memory_cache_hub.server.main
 ```
 
 Memory Cache Hub will start and you can navigate to [http://localhost:4444](http://localhost:4444) in your browser to access the GUI.
@@ -68,7 +68,7 @@ Memory Cache Hub will start and you can navigate to [http://localhost:4444](http
 Memory Cache Hub accepts several command-line arguments to customize its behavior. You can see a list of available arguments by running:
 
 ``` sh
-python -m memory_cache.server.main --help
+python -m memory_cache_hub.server.main --help
 ```
 
 ## Building for Release
@@ -77,14 +77,19 @@ Memory Cache Hub is packaged into a standalone executable using `PyInstaller`. T
 
 `PyInstaller` does not support cross-compilation, so you must build the application on the platform for which you are building the release. 
 
-To build a release, follow the instructions above to set up your development environment. Then run the appropriate build script for your platform:
+To build a release, follow the instructions above to set up your development environment. Then install the additional requirements for building the release:
 
-| Platform  | Command                     |
-|:----------|:----------------------------|
-| Windows   | `python -m build.win64`     |
-| MacOS     | `python -m build.macos`     |
-| GNU/Linux | `python -m build.gnu_linux` |
+```bash
+pip install -r requirements.build.txt
+```
 
-Use the `--help` flag to see a list of available arguments for each build script, including where the browser client assets are located.
+Then run the appropriate build script:
+
+``` sh
+python -m memory_cache_hub.build.build_memory_cache_hub
+```
 
 The build script will output a standalone executable in the `dist` directory.
+
+Pass `--help` as an argument to see additional arguments for the build script, such as where the browser client assets will be loaded from.
+

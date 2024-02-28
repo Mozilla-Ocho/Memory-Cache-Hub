@@ -1,8 +1,10 @@
 *.log
-build
+/build
 dist
 chroma.db
 venv
 file_store
 .mcdata
 __pycache__
+*.spec
+venv-build

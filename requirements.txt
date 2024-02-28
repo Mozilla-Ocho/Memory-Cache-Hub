@@ -4,3 +4,4 @@ fastapi
 python-multipart
 sentence_transformers
 uvicorn
+pydantic
