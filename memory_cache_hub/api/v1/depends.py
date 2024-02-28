@@ -8,6 +8,7 @@ api_config = ApiConfig(
     port=80,
     chroma_db_path="",
     file_store_path="",
+    llamafile_store_path="",
     completions_url="",
     completions_model="",
     embedding_device="",

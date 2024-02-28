@@ -9,6 +9,7 @@ class ApiConfig:
     port: int
     chroma_db_path: str
     file_store_path: str
+    llamafile_store_path: str
     completions_url: str
     completions_model: str
     embedding_device: str

@@ -15,15 +15,17 @@ import os
 
 def create_app(args):
     set_api_config(ApiConfig(
-        args.host,
-        args.port,
-        args.chroma_db_path,
-        args.file_store_path,
-        args.completions_url,
-        args.completions_model,
-        args.embedding_device,
-        args.embedding_model,
-        args.normalize_embeddings
+        host=args.host,
+        port=args.port,
+        chroma_db_path=args.chroma_db_path,
+        file_store_path=args.file_store_path,
+        llamafile_store_path=args.llamafile_store_path,
+        completions_url=args.completions_url,
+        completions_model=args.completions_model,
+        embedding_device=args.embedding_device,
+        embedding_model=args.embedding_model,
+        normalize_embeddings=args.normalize_embeddings
+
     ))
     set_chroma(Chroma(
         client=chroma_client(args.chroma_db_path),
@@ -65,6 +67,7 @@ def parse_arguments():
     parser.add_argument("--port", type=int, default=4444, help="Port to run the server on. (default: 4444)")
     parser.add_argument("--chroma-db-path", type=str, default="chroma.db", help="Path to the chroma database. (default: chroma.db)")
     parser.add_argument("--file-store-path", type=str, default="file_store", help="Path to the file store directory. (default: file_store)")
+    parser.add_argument("--llamafile-store-path", type=str, default="llamafile_store", help="Path where llamafiles should be stored. (default: llamafile_store)")
     parser.add_argument("--completions-url", type=str, default="http://localhost:8001/v1/chat/completions", help="Path to an OpenAI-compatible LLM completions endpoint. (default: localhost:8001/v1/chat/completions)")
     parser.add_argument("--completions-model", type=str, default="mixtral:8x7b-instruct-v0.1-fp16", help="Model to use for completions. (default: mixtral:8x7b-instruct-v0.1-fp16)")
     parser.add_argument('--embedding-device', help='Device to use for embedding (cpu or cuda)', default='cpu', choices=['cpu', 'cuda'])
