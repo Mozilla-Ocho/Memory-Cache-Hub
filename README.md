@@ -12,17 +12,17 @@ Memory Cache Hub is a core component of Memory Cache:
 - It ingests and retrieves document fragments with the help of a vector database.
 - It generates various artifacts using prompt templates and large language models.
 
-Memory Cache Hub runs as a standalone application and is designed to run on your own machine. All of your data is stored locally and is never uploaded to any server.
+Memory Cache Hub is designed to run on your own machine. All of your data is stored locally and is never uploaded to any server. 
 
 ## Installation
 
 To use Memory Cache:
 
-- Download the latest release executable for your platform (Windows, MacOS, or GNU/Linux)
-- Run the executable. It will open a new tab in your browser showing the Memory Cache GUI.
+- Download the latest release for your platform (Windows, MacOS, or GNU/Linux)
+- Run the release executable. It will open a new tab in your browser showing the Memory Cache GUI.
 - If the GUI does not open automatically, you can navigate to [http://localhost:4444](http://localhost:444) in your browser.
 
-Each release build of Memory Cache Hub is a standalone executable that includes the browser client and all necessary assets. You do not need to install any additional software to use Memory Cache. 
+Each release build of Memory Cache Hub is a standalone executable that includes the browser client and all necessary assets. By "standalone", we mean that you do not need to install any additional software to use Memory Cache. 
 
 A Firefox browser extension for Memory Cache that extends its functionality is also available. More information can be found in the main [Memory Cache repository](https://github.com/Mozilla-Ocho/Memory-Cache).
 
@@ -93,3 +93,14 @@ The build script will output a standalone executable in the `dist` directory.
 
 Pass `--help` as an argument to see additional arguments for the build script, such as where the browser client assets will be loaded from.
 
+## Troubleshooting
+
+### GLIBC Error
+
+You may encounter an error similar to the following when running the release build:
+
+```
+[76074] Error loading Python lib '/home/john/downloads/memory_cache_hub/_internal/libpython3.11.so.1.0': dlopen: /lib/x86_64-linux-gnu/libm.so.6: version `GLIBC_2.38' not found (required by /home/john/downloads/memory_cache_hub/_internal/libpython3.11.so.1.0)
+```
+
+This error occurs when the build was made on a system with a newer version of `glibc` than the one on your system. Let us know if this happens to you because it means we need to build releases on an older system.
