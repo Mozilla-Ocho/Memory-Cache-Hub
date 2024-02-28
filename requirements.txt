@@ -1,7 +1,10 @@
+aiofiles
+aiohttp
 argparse
+asyncio
 chromadb
 fastapi
+pydantic
 python-multipart
 sentence_transformers
 uvicorn
-pydantic

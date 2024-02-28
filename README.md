@@ -93,6 +93,30 @@ The build script will output a standalone executable in the `dist` directory.
 
 Pass `--help` as an argument to see additional arguments for the build script, such as where the browser client assets will be loaded from.
 
+## Running Tests
+
+To run the tests, set up your development environment following the instructions above. Then run the following command from the root of the repository:
+
+```bash
+python -m unittest discover -s tests
+```
+
+To run a particular test, you can specify a module name or file:
+
+```bash
+# Test a module
+python -m unittest tests.llamafile.test_llamafile_manager
+
+# Test a file
+python -m unittest tests/llamafile/test_llamafile_manager.py
+```
+
+By default, long-running tests (such as those that test file downloads) are skipped. To run these tests, set the `RUN_LONG_TESTS` environment variable to `1`:
+
+```bash 
+RUN_LONG_TESTS=1 python -m unittest discover -s tests
+```
+
 ## Troubleshooting
 
 ### GLIBC Error
