@@ -6,6 +6,7 @@ def parse_arguments():
     parser.add_argument("--executable-name", type=str, required=False, help="The name of the executable.")
     parser.add_argument("--entry-point", type=str, required=False, help="The entry point for the executable.")
     parser.add_argument("--onefile", action="store_true", required=False, help="Build a single file executable.")
+    parser.add_argument("--client-path", type=str, required=False, help="The path to the client directory.")
     args = parser.parse_args()
 
     args.project_root = os.path.join(os.path.dirname(__file__), "..", "..")
@@ -30,10 +31,14 @@ def main():
     ]
     llamafile_infos_json = os.path.join(args.project_root, "memory_cache_hub", "llamafile", "llamafile_infos.json")
     add_data_args += [
-        # f'--add-data={llamafile_infos_json}{os.pathsep}memory_cache_hub/llamafile/'
         f'--add-data={llamafile_infos_json}{os.pathsep}.'
     ]
 
+    if args.client_path:
+        print(f"Adding client path: {args.client_path}")
+        add_data_args += [f'--add-data={args.client_path}{os.pathsep}client']
+    else:
+        print(f"WARN: No client path provided. The client will not be included in the executable. Pass --client-path to include the client.")
 
     PyInstaller.__main__.run([
        args.entry_point,

@@ -15,6 +15,7 @@ from memory_cache_hub.llamafile.types import LlamafileManager
 from memory_cache_hub.core.llm import ollama_completions, Message
 from memory_cache_hub.llamafile.llamafile_infos import get_default_llamafile_infos
 import os
+import sys
 
 def create_app(args):
     set_api_config(ApiConfig(
@@ -68,8 +69,12 @@ def create_app(args):
         os.makedirs(args.file_store_path)
 
     app.mount("/files", app=StaticFiles(directory=args.file_store_path), name="files")
+
     if args.client_path:
         app.mount("/", StaticFiles(directory=args.client_path, html=True ), name="static")
+    elif getattr(sys, 'frozen', False) and os.path.exists(os.path.join(sys._MEIPASS, "client")):
+        app.mount("/", StaticFiles(directory=os.path.join(sys._MEIPASS, "client"), html=True), name="static")
+
     return app
 
 
