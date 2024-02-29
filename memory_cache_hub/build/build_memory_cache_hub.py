@@ -28,12 +28,18 @@ def main():
         # Explicitly add the site-packages directory, because otherwise the executable will fail to find dependencies at runtime.
         f'--add-data={os.path.join(args.project_root, "venv", "lib", "python3.11", "site-packages")}{os.pathsep}.'
     ]
+    llamafile_infos_json = os.path.join(args.project_root, "memory_cache_hub", "llamafile", "llamafile_infos.json")
+    add_data_args += [
+        # f'--add-data={llamafile_infos_json}{os.pathsep}memory_cache_hub/llamafile/'
+        f'--add-data={llamafile_infos_json}{os.pathsep}.'
+    ]
 
 
     PyInstaller.__main__.run([
        args.entry_point,
        "--onefile" if args.onefile else "--onedir",
        "--clean",
+       "--noconfirm",
        "--name", args.executable_name,
        *add_data_args
     ])
