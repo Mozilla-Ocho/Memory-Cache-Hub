@@ -4,9 +4,10 @@ import aiofiles
 import os
 
 class DownloadHandle:
-    def __init__(self, url, filename):
+    def __init__(self, url, filename, file_path):
         self.url = url
         self.filename = filename
+        self.file_path = file_path
         self.content_length = 0
         self.written = 0
         self.task = asyncio.create_task(self.download())
@@ -20,7 +21,9 @@ class DownloadHandle:
         async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(ssl=False)) as session:
             async with session.get(self.url) as response:
                 self.content_length = int(response.headers.get('content-length', 0))
-                async with aiofiles.open(self.filename, 'wb') as file:
+                # Make sure that the directory exists
+                os.makedirs(os.path.dirname(self.file_path), exist_ok=True)
+                async with aiofiles.open(self.file_path, 'wb') as file:
                     async for data in response.content.iter_chunked(1024):
                         await file.write(data)
                         self.written += len(data)
@@ -35,14 +38,3 @@ class DownloadHandle:
         return self.task.result() if self.task.done() else None
 
 
-if __name__ == '__main__':
-    async def main():
-        url = 'https://www.python.org/static/img/python-logo.png'
-        filename = 'python-logo.png'
-        download = DownloadHandle(url, filename)
-        while not download.is_complete():
-            print(f'{download.progress()}%')
-            await asyncio.sleep(1)
-        print(f'Download complete: {download.get_result()}')
-
-    asyncio.run(main())

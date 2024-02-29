@@ -2,15 +2,18 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from memory_cache_hub.core.chromadb import chroma_client, chroma_embedding_function
-from memory_cache_hub.api.v1.depends import set_api_config, set_chroma
+from memory_cache_hub.api.v1.depends import set_api_config, set_chroma, set_llamafile_manager
 from memory_cache_hub.api.v1.projects import router as projects_router
 from memory_cache_hub.api.v1.files import router as files_router
 from memory_cache_hub.api.v1.summaries import router as summaries_router
 from memory_cache_hub.api.v1.ingest import router as ingest_router
 from memory_cache_hub.api.v1.rag import router as rag_router
+from memory_cache_hub.api.v1.llamafile_manager import router as llamafile_manager_router
 from memory_cache_hub.api.v1.types import ApiConfig
 from memory_cache_hub.core.types import Chroma
+from memory_cache_hub.llamafile.types import LlamafileManager
 from memory_cache_hub.core.llm import ollama_completions, Message
+from memory_cache_hub.llamafile.llamafile_infos import get_default_llamafile_infos
 import os
 
 def create_app(args):
@@ -30,6 +33,11 @@ def create_app(args):
     set_chroma(Chroma(
         client=chroma_client(args.chroma_db_path),
         embedding_function=chroma_embedding_function(args.embedding_model, args.embedding_device, args.normalize_embeddings)
+    ))
+    set_llamafile_manager(LlamafileManager(
+        llamafiles=get_default_llamafile_infos(),
+        download_handles=[],
+        llamafile_store_path=args.llamafile_store_path
     ))
 
     app = FastAPI(
@@ -51,6 +59,7 @@ def create_app(args):
     app.include_router(summaries_router, prefix="/api/v1")
     app.include_router(ingest_router, prefix="/api/v1")
     app.include_router(rag_router, prefix="/api/v1")
+    app.include_router(llamafile_manager_router, prefix="/api/v1")
 
     if not os.path.exists(args.file_store_path):
         print(f"File store path {args.file_store_path} does not exist. Creating it.")
@@ -77,6 +86,8 @@ def parse_arguments():
 
 def main():
     import uvicorn
+#    from multiprocessing import freeze_support
+#    freeze_support() # See https://pyinstaller.org/en/stable/common-issues-and-pitfalls.html#multi-processing
     args = parse_arguments()
     app = create_app(args)
     uvicorn.run(app, host=args.host, port=args.port)

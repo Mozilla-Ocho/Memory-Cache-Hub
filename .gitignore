@@ -4,6 +4,7 @@ dist
 chroma.db
 venv
 file_store
+llamafile_store
 .mcdata
 __pycache__
 *.spec

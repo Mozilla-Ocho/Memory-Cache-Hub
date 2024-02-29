@@ -1,13 +1,7 @@
 from dataclasses import dataclass
-from typing import Any
-
-@dataclass
-class DownloadHandle:
-    llamafile_name: str
-    download_url: str
-    content_length: int
-    written: int
-    coroutine: Any
+from typing import Any, List
+from pydantic import BaseModel
+from memory_cache_hub.llamafile.download_handle import DownloadHandle
 
 @dataclass
 class LlamafileInfo:
@@ -17,3 +11,9 @@ class LlamafileInfo:
     license_url: str
     filename: str
     url: str
+
+@dataclass
+class LlamafileManager:
+    llamafiles: List[LlamafileInfo]
+    download_handles: List[DownloadHandle]
+    llamafile_store_path: str
