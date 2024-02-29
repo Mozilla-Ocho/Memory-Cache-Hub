@@ -5,44 +5,32 @@ from memory_cache_hub.core.types import Chroma
 from memory_cache_hub.llamafile.llamafile_infos import get_default_llamafile_infos
 from memory_cache_hub.llamafile.types import LlamafileManager
 
-# api_config = ApiConfig(
-#     host="",
-#     port=80,
-#     chroma_db_path="",
-#     file_store_path="",
-#     llamafile_store_path="",
-#     completions_url="",
-#     completions_model="",
-#     embedding_device="",
-#     embedding_model="",
-#     normalize_embeddings=False,
-# )
+
+# TODO: John: This way of storing state feels wrong,
+#       but I don't know a better way. I don't care that it's
+#       global or mutable -- in fact that's the point. But
+#       maybe there's a common python pattern for making
+#       singletons / global values
+
 api_config = None
-
-# chroma = Chroma(
-#     client=None,
-#     embedding_function=None
-# )
 chroma = None
-
-# llamafile_manager = LlamafileManager(
-#     llamafiles=get_default_llamafile_infos(),
-#     download_handles=[],
-#     llamafile_store_path=""
-# )
 llamafile_manager = None
 
+get_api_config = lambda: api_config
+get_chroma = lambda: chroma
 get_llamafile_manager = lambda: llamafile_manager
-def set_llamafile_manager(manager: LlamafileManager):
-    global llamafile_manager
-    llamafile_manager = manager
 
 def set_api_config(config: ApiConfig):
     global api_config
     api_config = config
 
-def get_api_config():
-    return api_config
+def set_chroma(c: Chroma):
+    global chroma
+    chroma = c
+
+def set_llamafile_manager(manager: LlamafileManager):
+    global llamafile_manager
+    llamafile_manager = manager
 
 def get_root_directory():
     return api_config.file_store_path
@@ -52,10 +40,6 @@ def get_completions_url():
 
 def get_completions_model():
     return api_config.completions_model
-
-def set_chroma(pc: Chroma):
-    global chroma
-    chroma = pc
 
 def get_chroma_client():
     return chroma.client
