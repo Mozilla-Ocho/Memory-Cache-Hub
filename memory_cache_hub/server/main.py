@@ -68,6 +68,8 @@ def create_app(args):
         os.makedirs(args.file_store_path)
 
     app.mount("/files", app=StaticFiles(directory=args.file_store_path), name="files")
+    if args.client_path:
+        app.mount("/", StaticFiles(directory=args.client_path, html=True ), name="static")
     return app
 
 
@@ -84,6 +86,7 @@ def parse_arguments():
     parser.add_argument('--embedding-device', help='Device to use for embedding (cpu or cuda)', default='cpu', choices=['cpu', 'cuda'])
     parser.add_argument('--embedding-model', help='Model to use for embedding (default "all-MiniLM-L6-v2")', default='all-MiniLM-L6-v2')
     parser.add_argument('--normalize-embeddings', help='Normalize embeddings', action='store_true')
+    parser.add_argument("--client-path", type=str, help="Path to the build directory of the client.")
     return parser.parse_args()
 
 def main():
