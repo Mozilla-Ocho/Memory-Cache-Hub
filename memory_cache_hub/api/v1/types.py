@@ -67,3 +67,11 @@ class LlamafileDownloadStatusResponse(BaseModel):
     progress: Optional[int] = None
     content_length: Optional[int] = None
     written: Optional[int] = None
+
+class StartLlamafileResponse(BaseModel):
+    status: str
+    message: Optional[str] = None
+
+class StopLlamafileResponse(BaseModel):
+    status: str
+    message: Optional[str] = None

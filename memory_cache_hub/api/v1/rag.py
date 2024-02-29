@@ -4,7 +4,7 @@ from memory_cache_hub.core.types import Message
 from memory_cache_hub.core.files import get_project_uploads_directory, list_project_file_uploads
 from memory_cache_hub.core.chromadb import chroma_collection_for_project
 from memory_cache_hub.core.rag import fragments_from_files
-from memory_cache_hub.core.llm import ollama_completions
+from memory_cache_hub.core.llm import ollama_completions, openai_compatible_completions
 
 from fastapi import APIRouter, Depends
 from dataclasses import asdict
@@ -47,7 +47,8 @@ def rag_ask(
         ),
     ]
 
-    reply = ollama_completions(complete_url, complete_model, messages)
+    #reply = ollama_completions(complete_url, complete_model, messages)
+    reply = openai_compatible_completions(complete_url, complete_model, messages)
 
     print("\n\n\n--------\n")
     print(prompt)

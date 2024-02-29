@@ -37,7 +37,9 @@ def create_app(args):
     set_llamafile_manager(LlamafileManager(
         llamafiles=get_default_llamafile_infos(),
         download_handles=[],
-        llamafile_store_path=args.llamafile_store_path
+        run_handles=[],
+        # Get the FULL path for llamafile_store_path
+        llamafile_store_path=os.path.abspath(args.llamafile_store_path)
     ))
 
     app = FastAPI(
@@ -71,14 +73,14 @@ def create_app(args):
 
 def parse_arguments():
     import argparse
-    parser = argparse.ArgumentParser(description="Acorn PAL Brain")
+    parser = argparse.ArgumentParser(description="Memory Cache Hub")
     parser.add_argument("--host", type=str, default="0.0.0.0", help="Host to run the server on. (default: 0.0.0.0)")
     parser.add_argument("--port", type=int, default=4444, help="Port to run the server on. (default: 4444)")
     parser.add_argument("--chroma-db-path", type=str, default="chroma.db", help="Path to the chroma database. (default: chroma.db)")
     parser.add_argument("--file-store-path", type=str, default="file_store", help="Path to the file store directory. (default: file_store)")
     parser.add_argument("--llamafile-store-path", type=str, default="llamafile_store", help="Path where llamafiles should be stored. (default: llamafile_store)")
-    parser.add_argument("--completions-url", type=str, default="http://localhost:8001/v1/chat/completions", help="Path to an OpenAI-compatible LLM completions endpoint. (default: localhost:8001/v1/chat/completions)")
-    parser.add_argument("--completions-model", type=str, default="mixtral:8x7b-instruct-v0.1-fp16", help="Model to use for completions. (default: mixtral:8x7b-instruct-v0.1-fp16)")
+    parser.add_argument("--completions-url", type=str, default="http://localhost:8888/v1/chat/completions", help="Path to an OpenAI-compatible LLM completions endpoint. (default: localhost:8888/v1/chat/completions)")
+    parser.add_argument("--completions-model", type=str, default="mixtral:8x7b-instruct-v0.1-fp16", help="Model to use for completions. (default: mixtral:8x7b-instruct-v0.1-fp16). This argument is ignored when running local llamafiles.")
     parser.add_argument('--embedding-device', help='Device to use for embedding (cpu or cuda)', default='cpu', choices=['cpu', 'cuda'])
     parser.add_argument('--embedding-model', help='Model to use for embedding (default "all-MiniLM-L6-v2")', default='all-MiniLM-L6-v2')
     parser.add_argument('--normalize-embeddings', help='Normalize embeddings', action='store_true')
