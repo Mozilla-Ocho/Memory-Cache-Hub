@@ -63,7 +63,9 @@ Then, run the application:
 python -m memory_cache_hub.server.main
 ```
 
-Memory Cache Hub will start and you can navigate to [http://localhost:4444](http://localhost:4444) in your browser to access the GUI.
+If you specify a `--client-path` on the command line, Memory Cache Hub will serve the static client assets from its root path, and you can navigate to [http://localhost:4444](http://localhost:4444) in your browser to access the GUI.
+
+Memory Cache Hub also has a SwaggerUI interface that you can access at [http://localhost:4444/docs](http://localhost:4444/docs).
 
 Memory Cache Hub accepts several command-line arguments to customize its behavior. You can see a list of available arguments by running:
 
