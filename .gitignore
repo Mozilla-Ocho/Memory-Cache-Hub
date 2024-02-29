@@ -1,3 +1,4 @@
+.pal
 *.log
 /build
 dist
