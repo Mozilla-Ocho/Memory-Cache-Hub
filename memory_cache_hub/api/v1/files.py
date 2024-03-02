@@ -9,7 +9,7 @@ import shutil
 
 router = APIRouter()
 
-@router.post("/upload_file/", status_code=200, tags=["files"])
+@router.post("/upload_file", status_code=200, tags=["files"])
 async def upload_file(
         project_name: str = Form(...),
         file_path: str = Form(...),
@@ -18,14 +18,14 @@ async def upload_file(
     write_file_upload(root_directory, project_name, file_path, file)
     return {"status": "ok"}
 
-@router.delete("/delete_file/", status_code=200, tags=["files"])
+@router.delete("/delete_file", status_code=200, tags=["files"])
 async def delete_file(project_name: str, file_path: str, root_directory = Depends(get_root_directory)):
     if _delete_file(root_directory, project_name, file_path):
         return {"status": "ok"}
     else:
         raise HTTPException(status_code=404, detail="File not found")
 
-@router.get("/list_files/{project_name}/", response_model=List[str], tags=["files"])
+@router.get("/list_files/{project_name}", response_model=List[str], tags=["files"])
 async def list_files(project_name: str, root_directory = Depends(get_root_directory)):
     files_list = []
     files_list.extend(list_project_file_uploads(root_directory, project_name))
