@@ -5,8 +5,6 @@ from memory_cache_hub.core.files import delete_project_directory, create_empty_p
 
 router = APIRouter()
 
-
-
 @router.get("/list_projects", response_model=ListProjectsResponse, tags=["projects"])
 async def list_projects(chroma_client=Depends(get_chroma_client)):
     collections = chroma_client.list_collections()
@@ -14,7 +12,6 @@ async def list_projects(chroma_client=Depends(get_chroma_client)):
     # Use the collection name as both the project name and project id
     projects = [{"project_name": collection_name, "project_id": collection_name} for collection_name in collection_names]
     return {"projects": projects}
-
 
 @router.post("/get_or_create_project", response_model=ListProjectsResponse, tags=["projects"])
 async def get_or_create_project(request: GetOrCreateProjectRequest, chroma_client=Depends(get_chroma_client), root_directory=Depends(get_root_directory)):

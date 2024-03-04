@@ -18,7 +18,7 @@ class ApiConfig:
 
 class Project(BaseModel):
     project_name: str
-    project_id : str
+    project_id: str
 
 class ListProjectsResponse(BaseModel):
     projects: List[Project]
@@ -27,6 +27,10 @@ class GetOrCreateProjectRequest(BaseModel):
     project_name: str
 
 class DeleteProjectRequest(BaseModel):
+    project_name: str
+
+class AddDirectoryToProjectRequest(BaseModel):
+    directory: str
     project_name: str
 
 class FileUpload(BaseModel):

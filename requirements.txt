@@ -4,6 +4,7 @@ argparse
 asyncio
 chromadb
 fastapi
+pathspec
 pydantic
 python-multipart
 sentence_transformers

@@ -2,10 +2,10 @@ import os
 import shutil
 
 def get_project_uploads_directory(root_directory: str, project_name: str):
-    return os.path.join(root_directory, "uploads", project_name)
+    return os.path.join(root_directory, project_name, "uploads")
 
 def get_project_summaries_directory(root_directory: str, project_name: str):
-    return os.path.join(root_directory, "summaries", project_name)
+    return os.path.join(root_directory, project_name, "summaries")
 
 def get_file_summary_path(root_directory: str, project_name: str, file_path: str):
     return os.path.join(get_project_summaries_directory(root_directory, project_name), file_path + ".summary.md")
@@ -85,3 +85,47 @@ def list_project_file_summaries(root_directory: str, project_name: str):
             relative_path = os.path.relpath(full_path, root_directory)
             files_list.append(relative_path)
     return files_list
+
+import os
+import shutil
+import pathspec
+
+def load_gitignore_specs(directory):
+    specs = []
+    for root, dirs, files in os.walk(directory, topdown=True):
+        if '.gitignore' in files:
+            gitignore_path = os.path.join(root, '.gitignore')
+            with open(gitignore_path, 'r') as file:
+                patterns = file.read().splitlines()
+            spec = pathspec.PathSpec.from_lines('gitwildmatch', patterns)
+            specs.append((root, spec))
+    return specs
+
+def should_ignore(path, specs):
+    for root, spec in specs:
+        if path.startswith(root) and spec.match_file(os.path.relpath(path, root)):
+            return True
+    return False
+
+def copytree(src, dst, specs):
+    os.makedirs(dst, exist_ok=True)
+    for item in os.listdir(src):
+        s = os.path.join(src, item)
+        d = os.path.join(dst, item)
+        if should_ignore(s, specs):
+            continue  # Skip copying this item
+        if os.path.isdir(s):
+            copytree(s, d, specs)
+        else:
+            shutil.copy2(s, d)
+
+def add_directory_to_project(root_directory: str, project_name: str, directory: str):
+    project_uploads_directory = get_project_uploads_directory(root_directory, project_name)
+    subdirectory_name = directory.replace(os.sep, "__")
+    target_directory = os.path.join(project_uploads_directory, subdirectory_name)
+
+    if os.path.exists(target_directory):
+        shutil.rmtree(target_directory)
+
+    specs = load_gitignore_specs(directory)
+    copytree(directory, target_directory, specs)
