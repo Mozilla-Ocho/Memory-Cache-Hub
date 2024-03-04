@@ -14,7 +14,6 @@ class RunHandle:
         return self.process is not None and self.process.returncode is None
 
     def start(self):
-        self.stop()
         self.task = asyncio.create_task(self._run())
 
     async def stop(self):
@@ -36,6 +35,8 @@ class RunHandle:
 
     # Don't call this. Use start() instead.
     async def _run(self):
+        print("stopping any existing process if one exists")
+        await self.stop()
         print("_run: Starting...")
         try:
             full_file_path = os.path.join(self.llamafile_store_path, self.llamafile_info.filename)

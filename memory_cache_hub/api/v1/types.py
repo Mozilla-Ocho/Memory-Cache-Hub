@@ -16,7 +16,9 @@ class ApiConfig:
     embedding_model: str
     normalize_embeddings: bool
 
-Project = str
+class Project(BaseModel):
+    project_name: str
+    project_id : str
 
 class ListProjectsResponse(BaseModel):
     projects: List[Project]
@@ -31,14 +33,25 @@ class FileUpload(BaseModel):
     project_name: str
     file_path: str
 
+class DeleteFileRequest(BaseModel):
+    project_name: str
+    file_path: str
+
 class SummarizeFileRequest(BaseModel):
     project_name: str
     file_path: str
 
+# For SummarizeFileResponse, there are two types of responses:
+#  - success has status, project_name, summary_file_path, and summary
+#  - failure has status and message
 class SummarizeFileResponse(BaseModel):
-    project_name: str
-    summary_file_path: str
-    summary: str
+    status: str
+    project_name: Optional[str] = None
+    summary_file_path: Optional[str] = None
+    summary: Optional[str] = None
+    message: Optional[str] = None
+
+
 
 class IngestProjectFilesRequest(BaseModel):
     project_name: str

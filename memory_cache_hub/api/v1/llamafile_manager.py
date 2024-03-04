@@ -17,8 +17,8 @@ async def download_llamafile_by_name(
     download_handle = download_llamafile(llamafile_manager, llamafile_info)
     return DownloadLlamafileByNameResponse(status="success", message="Llamafile download started")
 
-@router.post("/llamafile_download_status", status_code=200, tags=["llamafile"])
-async def llamafile_download_status(
+@router.post("/check_llamafile_download_progress", status_code=200, tags=["llamafile"])
+async def check_llamafile_download_progress(
         request: DownloadLlamafileByNameRequest,
         llamafile_manager = Depends(get_llamafile_manager)):
     llamafile_info = get_llamafile_info_by_filename(llamafile_manager, request.llamafile_filename)
