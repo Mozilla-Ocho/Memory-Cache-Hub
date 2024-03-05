@@ -3,22 +3,22 @@ from typing import List
 from memory_cache_hub.api.v1.depends import get_root_directory
 from memory_cache_hub.core.files import write_file_upload, list_project_file_uploads, list_project_file_summaries
 from memory_cache_hub.core.files import delete_file as _delete_file
-from memory_cache_hub.core.files import add_directory_to_project
+from memory_cache_hub.core.files import add_directory_to_project, remove_directory_from_project
 from memory_cache_hub.api.v1.types import FileUpload, DeleteFileRequest, AddDirectoryToProjectRequest
 import os
 import shutil
 
 router = APIRouter()
 
-# Add API to recursively copy files in a directory to the project's uploads directory
-# The client will specify the source directory and the destination project name
-# The server will look at its OWN file system for the source directory, but this
-# will be handled in the core/files.py module
+@router.post("/remove_directory_from_project", status_code=200, tags=["files"])
+async def api_remove_directory_from_project(request: AddDirectoryToProjectRequest, root_directory = Depends(get_root_directory)):
+    remove_directory_from_project(root_directory, request.project_name, request.directory)
+    return {"status": "ok"}
+
 @router.post("/add_directory_to_project", status_code=200, tags=["files"])
 async def api_add_directory_to_project(request: AddDirectoryToProjectRequest, root_directory = Depends(get_root_directory)):
     project_name = request.project_name
     directory = request.directory
-    print(f"Adding directory {directory} to project {project_name}")
     add_directory_to_project(root_directory, project_name, directory)
     return {"status": "ok"}
 

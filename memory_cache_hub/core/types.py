@@ -33,3 +33,4 @@ class Fragment:
     fragment_text: Document
     fragment_embedding: Vector
     fragment_metadata: FragmentMetadata
+

@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from memory_cache_hub.core.chromadb import chroma_client, chroma_embedding_function
-from memory_cache_hub.api.v1.depends import set_api_config, set_chroma, set_llamafile_manager
+from memory_cache_hub.api.v1.depends import set_api_config, set_chroma, set_llamafile_manager, set_db
 from memory_cache_hub.api.v1.projects import router as projects_router
 from memory_cache_hub.api.v1.files import router as files_router
 from memory_cache_hub.api.v1.summaries import router as summaries_router
@@ -11,6 +11,7 @@ from memory_cache_hub.api.v1.rag import router as rag_router
 from memory_cache_hub.api.v1.llamafile_manager import router as llamafile_manager_router
 from memory_cache_hub.api.v1.types import ApiConfig
 from memory_cache_hub.core.types import Chroma
+from memory_cache_hub.db.db import initialize_sqlite_db
 from memory_cache_hub.llamafile.types import LlamafileManager
 from memory_cache_hub.core.llm import ollama_completions, Message
 from memory_cache_hub.llamafile.llamafile_infos import get_default_llamafile_infos
@@ -42,6 +43,7 @@ def create_app(args):
         # Get the FULL path for llamafile_store_path
         llamafile_store_path=os.path.abspath(args.llamafile_store_path)
     ))
+    set_db(initialize_sqlite_db(sqlite_db_path=args.sqlite_db_path))
 
     app = FastAPI(
         title="Memory Cache Hub",
@@ -84,6 +86,7 @@ def parse_arguments():
     parser.add_argument("--host", type=str, default="0.0.0.0", help="Host to run the server on. (default: 0.0.0.0)")
     parser.add_argument("--port", type=int, default=4444, help="Port to run the server on. (default: 4444)")
     parser.add_argument("--chroma-db-path", type=str, default="chroma.db", help="Path to the chroma database. (default: chroma.db)")
+    parser.add_argument("--sqlite-db-path", type=str, default="memory_cache.db", help="Path to the sqlite database. (default: memory_cache.db)")
     parser.add_argument("--file-store-path", type=str, default="file_store", help="Path to the file store directory. (default: file_store)")
     parser.add_argument("--llamafile-store-path", type=str, default="llamafile_store", help="Path where llamafiles should be stored. (default: llamafile_store)")
     parser.add_argument("--completions-url", type=str, default="http://localhost:8888/v1/chat/completions", help="Path to an OpenAI-compatible LLM completions endpoint. (default: localhost:8888/v1/chat/completions)")

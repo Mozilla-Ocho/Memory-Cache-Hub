@@ -2,6 +2,14 @@ from pydantic import BaseModel
 from typing import List, Optional
 from dataclasses import dataclass
 from memory_cache_hub.core.types import Chroma
+from memory_cache_hub.db.types import Project
+
+class OkResponse(BaseModel):
+    status: str = "ok"
+
+class ErrorResponse(BaseModel):
+    status: str = "error"
+    message: str
 
 @dataclass
 class ApiConfig:
@@ -16,17 +24,17 @@ class ApiConfig:
     embedding_model: str
     normalize_embeddings: bool
 
-class Project(BaseModel):
-    project_name: str
-    project_id: str
+class CreateProjectRequest(BaseModel):
+    project_name: Optional[str] = None
 
 class ListProjectsResponse(BaseModel):
     projects: List[Project]
 
-class GetOrCreateProjectRequest(BaseModel):
-    project_name: str
-
 class DeleteProjectRequest(BaseModel):
+    project_id: int
+
+class GetOrCreateProjectRequest(BaseModel):
+    project_id: int
     project_name: str
 
 class AddDirectoryToProjectRequest(BaseModel):

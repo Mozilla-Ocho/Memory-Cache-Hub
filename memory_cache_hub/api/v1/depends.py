@@ -15,10 +15,12 @@ from memory_cache_hub.llamafile.types import LlamafileManager
 api_config = None
 chroma = None
 llamafile_manager = None
+db = None
 
 get_api_config = lambda: api_config
 get_chroma = lambda: chroma
 get_llamafile_manager = lambda: llamafile_manager
+get_db = lambda: db
 
 def set_api_config(config: ApiConfig):
     global api_config
@@ -31,6 +33,10 @@ def set_chroma(c: Chroma):
 def set_llamafile_manager(manager: LlamafileManager):
     global llamafile_manager
     llamafile_manager = manager
+
+def set_db(_db):
+    global db
+    db = _db
 
 def get_root_directory():
     return api_config.file_store_path

@@ -129,3 +129,11 @@ def add_directory_to_project(root_directory: str, project_name: str, directory: 
 
     specs = load_gitignore_specs(directory)
     copytree(directory, target_directory, specs)
+
+def remove_directory_from_project(root_directory: str, project_name: str, directory: str):
+    project_uploads_directory = get_project_uploads_directory(root_directory, project_name)
+    subdirectory_name = directory.replace(os.sep, "__")
+    target_directory = os.path.join(project_uploads_directory, subdirectory_name)
+
+    if os.path.exists(target_directory):
+        shutil.rmtree(target_directory)

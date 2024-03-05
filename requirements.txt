@@ -8,4 +8,5 @@ pathspec
 pydantic
 python-multipart
 sentence_transformers
+sqlmodel
 uvicorn
