@@ -1,5 +1,8 @@
 import os
 import shutil
+import pathspec
+from memory_cache_hub.db.projects import db_list_project_directories, db_get_project
+
 
 def get_project_uploads_directory(root_directory: str, project_name: str):
     return os.path.join(root_directory, project_name, "uploads")
@@ -86,9 +89,6 @@ def list_project_file_summaries(root_directory: str, project_name: str):
             files_list.append(relative_path)
     return files_list
 
-import os
-import shutil
-import pathspec
 
 def load_gitignore_specs(directory):
     specs = []
@@ -137,3 +137,24 @@ def remove_directory_from_project(root_directory: str, project_name: str, direct
 
     if os.path.exists(target_directory):
         shutil.rmtree(target_directory)
+
+def sync_project_files(db, root_directory: str, project_id: int):
+    # Use db_list_project_directories to get the list of directories
+    # Then, copy each directory into the project_uploads_directory
+    source_directories = db_list_project_directories(db, project_id)
+    project = db_get_project(db, project_id)
+    project_uploads_directory = get_project_uploads_directory(root_directory, project.name)
+    # empty the uploads directory
+    if os.path.exists(project_uploads_directory):
+        shutil.rmtree(project_uploads_directory)
+
+    # If any of the source directories don't exist, return an error with a message
+    for source_directory in source_directories:
+        if not os.path.exists(source_directory.path):
+            # Return a python dict with status and message
+            return {"status": "error", "message": f"Source directory {source_directory.path} does not exist"}
+
+    for source_directory in source_directories:
+        add_directory_to_project(root_directory, project.name, source_directory.path)
+
+    return {"status": "ok"}
