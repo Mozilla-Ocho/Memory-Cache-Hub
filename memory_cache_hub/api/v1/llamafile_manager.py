@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from memory_cache_hub.api.v1.depends import get_llamafile_manager
-from memory_cache_hub.api.v1.types import DownloadLlamafileByNameRequest, DownloadLlamafileByNameResponse, LlamafileDownloadStatusResponse, StartLlamafileResponse, StopLlamafileResponse
-from memory_cache_hub.llamafile.llamafile_manager import get_llamafile_info_by_filename, download_llamafile, start_llamafile, stop_llamafile
+from memory_cache_hub.api.v1.types import CheckLlamafileStatusRequest, DownloadLlamafileByNameRequest, DownloadLlamafileByNameResponse, LlamafileDownloadStatusResponse, StartLlamafileResponse, StopLlamafileResponse
+from memory_cache_hub.llamafile.llamafile_manager import get_llamafile_info_by_filename, download_llamafile, start_llamafile, stop_llamafile, has_llamafile, delete_llamafile
 import os
 import shutil
 
@@ -17,17 +17,25 @@ async def download_llamafile_by_name(
     download_handle = download_llamafile(llamafile_manager, llamafile_info)
     return DownloadLlamafileByNameResponse(status="success", message="Llamafile download started")
 
-@router.post("/check_llamafile_download_progress", status_code=200, tags=["llamafile"])
-async def check_llamafile_download_progress(
-        request: DownloadLlamafileByNameRequest,
+@router.post("/check_llamafile_status", status_code=200, tags=["llamafile"])
+async def check_llamafile_status(
+        request: CheckLlamafileStatusRequest,
         llamafile_manager = Depends(get_llamafile_manager)):
     llamafile_info = get_llamafile_info_by_filename(llamafile_manager, request.llamafile_filename)
     if llamafile_info is None:
         return LlamafileDownloadStatusResponse(status="error", message="Llamafile not found")
+
+    for run_handle in llamafile_manager.run_handles:
+        if run_handle.llamafile_info.filename == llamafile_info.filename:
+            return LlamafileDownloadStatusResponse(status="running", message="Llamafile is running")
+
     for download_handle in llamafile_manager.download_handles:
         if download_handle.filename == llamafile_info.filename:
             return LlamafileDownloadStatusResponse(status="downloading", message="Llamafile is downloading", progress=download_handle.progress(), content_length=download_handle.content_length, written=download_handle.written)
-    return LlamafileDownloadStatusResponse(status="error", message="Llamafile not found")
+
+    if has_llamafile(llamafile_manager, llamafile_info):
+        return LlamafileDownloadStatusResponse(status="idle", message="Llamafile is downloaded")
+    return LlamafileDownloadStatusResponse(status="absent", message="Llamafile not downloaded")
 
 @router.post("/start_llamafile", status_code=200, tags=["llamafile"])
 async def api_start_llamafile(
@@ -52,3 +60,19 @@ async def api_stop_llamafile(
         return StopLlamafileResponse(status="success", message="Llamafile stopped")
     else:
         return StopLlamafileResponse(status="error", message="Llamafile not found")
+
+@router.get("/list_llamafiles", status_code=200, tags=["llamafile"])
+async def list_llamafiles(llamafile_manager = Depends(get_llamafile_manager)):
+    return llamafile_manager.llamafiles
+
+@router.delete("/delete_llamafile", status_code=200, tags=["llamafile"])
+async def api_delete_llamafile(
+        request: DownloadLlamafileByNameRequest,
+        llamafile_manager = Depends(get_llamafile_manager)):
+    llamafile_info = get_llamafile_info_by_filename(llamafile_manager, request.llamafile_filename)
+    if llamafile_info is None:
+        return {"status": "error", "message": "Llamafile not found"}
+    if delete_llamafile(llamafile_manager, llamafile_info):
+        return {"status": "success", "message": "Llamafile deleted"}
+    else:
+        return {"status": "error", "message": "Llamafile not found"}

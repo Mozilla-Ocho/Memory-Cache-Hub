@@ -10,10 +10,14 @@ def get_llamafile_info_by_filename(llamafile_manager: LlamafileManager, filename
     return None
 
 def download_llamafile(llamafile_manager: LlamafileManager, llamafile_info: LlamafileInfo):
+    def on_complete(download_handle):
+        llamafile_manager.download_handles.remove(download_handle)
+
     download_handle = DownloadHandle(
         url=llamafile_info.url,
         filename=llamafile_info.filename,
         file_path=os.path.join(llamafile_manager.llamafile_store_path, llamafile_info.filename),
+        on_complete=on_complete
     )
     llamafile_manager.download_handles.append(download_handle)
     return download_handle
@@ -27,8 +31,6 @@ def start_llamafile(llamafile_manager: LlamafileManager, llamafile_info: Llamafi
     # TODO: A run_handle does not automatically start, but a download_handle does.
     #       Maybe both should have the same behavior.
     run_handle.start()
-    print(f"Started llamafile {llamafile_info.filename}.")
-    print(run_handle)
     return run_handle
 
 async def stop_llamafile(llamafile_manager: LlamafileManager, llamafile_info: LlamafileInfo):
@@ -39,4 +41,16 @@ async def stop_llamafile(llamafile_manager: LlamafileManager, llamafile_info: Ll
             llamafile_manager.run_handles.remove(run_handle)
             return True
     print(f"No running llamafile found for {llamafile_info.filename}.")
+    return False
+
+def has_llamafile(llamafile_manager: LlamafileManager, llamafile_info: LlamafileInfo):
+    # Check if the file is already downloaded
+    file_path = os.path.join(llamafile_manager.llamafile_store_path, llamafile_info.filename)
+    return os.path.exists(file_path)
+
+def delete_llamafile(llamafile_manager: LlamafileManager, llamafile_info: LlamafileInfo):
+    file_path = os.path.join(llamafile_manager.llamafile_store_path, llamafile_info.filename)
+    if os.path.exists(file_path):
+        os.remove(file_path)
+        return True
     return False

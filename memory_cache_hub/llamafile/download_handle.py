@@ -4,13 +4,21 @@ import aiofiles
 import os
 
 class DownloadHandle:
-    def __init__(self, url, filename, file_path):
+    def __init__(self, url, filename, file_path, on_complete=None):
         self.url = url
         self.filename = filename
         self.file_path = file_path
         self.content_length = 0
         self.written = 0
         self.task = asyncio.create_task(self.download())
+        self.on_complete = on_complete
+        # Ensure the on_complete callback is called when the task is done
+        self.task.add_done_callback(self.handle_completion)
+
+    def handle_completion(self, task):
+        # Call the on_complete callback if defined
+        if self.on_complete:
+            self.on_complete(self)
 
     async def download(self):
         # BUG On MacOS, https requests failed unless I disabled ssl checking.
