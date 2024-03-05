@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from memory_cache_hub.api.v1.depends import get_chroma_client, get_root_directory, get_db
 from memory_cache_hub.api.v1.types import ListProjectsResponse, DeleteProjectRequest, CreateProjectRequest, OkResponse, ErrorResponse
 from memory_cache_hub.core.files import delete_project_directory, create_empty_project_directory
-from memory_cache_hub.db.projects import db_create_project, db_list_projects, db_delete_project
+from memory_cache_hub.db.projects import db_create_project, db_list_projects, db_delete_project, db_create_project_directory, db_list_project_directories, db_delete_project_directory
 
 router = APIRouter()
 
@@ -34,3 +34,20 @@ async def delete_project(request: DeleteProjectRequest,
         return OkResponse()
     except ValueError:
         return ErrorResponse(message="Project not found")
+
+@router.post("/create_project_directory", tags=["projects"])
+async def create_project_directory(project_id: int, path: str, db=Depends(get_db)):
+    if path == "":
+        return ErrorResponse(message="Path cannot be empty")
+    project_directory = db_create_project_directory(db, project_id, path)
+    return project_directory
+
+@router.get("/list_project_directories", tags=["projects"])
+async def list_project_directories(project_id: int, db=Depends(get_db)):
+    project_directories = db_list_project_directories(db, project_id)
+    return project_directories
+
+@router.delete("/delete_project_directory", tags=["projects"])
+async def delete_project_directory(directory_id: int, db=Depends(get_db)):
+    project_directory = db_delete_project_directory(db, directory_id)
+    return project_directory
