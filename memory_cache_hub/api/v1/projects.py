@@ -48,6 +48,6 @@ async def list_project_directories(project_id: int, db=Depends(get_db)):
     return project_directories
 
 @router.delete("/delete_project_directory", tags=["projects"])
-async def delete_project_directory(directory_id: int, db=Depends(get_db)):
+async def api_delete_project_directory(directory_id: int, db=Depends(get_db)):
     project_directory = db_delete_project_directory(db, directory_id)
     return project_directory
