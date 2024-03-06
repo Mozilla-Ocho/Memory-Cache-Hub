@@ -39,7 +39,7 @@ def db_create_project_directory(db, project_id: int, path: str):
 
 def db_list_project_directories(db, project_id: int):
     with Session(db) as session:
-        project_directories = session.query(ProjectDirectory).filter(ProjectDirectory.project_id == project_id, Project.is_removed == False).all()
+        project_directories = session.query(ProjectDirectory).filter(ProjectDirectory.project_id == project_id, ProjectDirectory.is_removed == False).all()
         return project_directories
 
 def db_delete_project_directory(db, directory_id: int):

@@ -1,10 +1,11 @@
-from memory_cache_hub.api.v1.depends import get_root_directory, get_chroma_client, get_embedding_function, get_completions_url, get_completions_model
-from memory_cache_hub.api.v1.types import IngestProjectFilesRequest, IngestProjectFilesResponse, RagAskRequest, RagAskResponse
+from memory_cache_hub.api.v1.depends import get_root_directory, get_chroma_client, get_embedding_function, get_completions_url, get_completions_model, get_db
+from memory_cache_hub.api.v1.types import RagAskRequest, RagAskResponse
 from memory_cache_hub.core.types import Message
 from memory_cache_hub.core.files import get_project_uploads_directory, list_project_file_uploads
 from memory_cache_hub.core.chromadb import chroma_collection_for_project
 from memory_cache_hub.core.rag import fragments_from_files
 from memory_cache_hub.core.llm import ollama_completions, openai_compatible_completions
+from memory_cache_hub.db.projects import db_get_project
 
 from fastapi import APIRouter, Depends
 from dataclasses import asdict
@@ -19,11 +20,12 @@ def rag_ask(
         complete_url: str = Depends(get_completions_url),
         complete_model: str = Depends(get_completions_model),
         chroma_client = Depends(get_chroma_client),
-        chroma_embedding_function = Depends(get_embedding_function)
+        chroma_embedding_function = Depends(get_embedding_function),
+        db=Depends(get_db)
 ):
     prompt = body.prompt
-    project_name = body.project_name
-    chroma_collection = chroma_collection_for_project(chroma_client, chroma_embedding_function, project_name)
+    project = db_get_project(db, body.project_id)
+    chroma_collection = chroma_collection_for_project(chroma_client, chroma_embedding_function, project.name)
     query_results = chroma_collection.query(query_texts=[prompt])
 
     big_content = ""

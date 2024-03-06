@@ -2,28 +2,15 @@ from fastapi import APIRouter, HTTPException, UploadFile, File, Depends, Form
 from typing import List
 from memory_cache_hub.api.v1.depends import get_root_directory, get_db
 from memory_cache_hub.core.files import write_file_upload, list_project_file_uploads, list_project_file_summaries
-from memory_cache_hub.core.files import delete_file as _delete_file
-from memory_cache_hub.core.files import add_directory_to_project, remove_directory_from_project
+# from memory_cache_hub.core.files import delete_file as _delete_file
 from memory_cache_hub.core.files import sync_project_files
-from memory_cache_hub.api.v1.types import FileUpload, DeleteFileRequest, AddDirectoryToProjectRequest
+# from memory_cache_hub.api.v1.types import DeleteFileRequest
 from memory_cache_hub.api.v1.types import ErrorResponse, OkResponse
 from memory_cache_hub.db.projects import db_get_project
 import os
 import shutil
 
 router = APIRouter()
-
-@router.post("/remove_directory_from_project", status_code=200, tags=["files"])
-async def api_remove_directory_from_project(request: AddDirectoryToProjectRequest, root_directory = Depends(get_root_directory)):
-    remove_directory_from_project(root_directory, request.project_name, request.directory)
-    return {"status": "ok"}
-
-@router.post("/add_directory_to_project", status_code=200, tags=["files"])
-async def api_add_directory_to_project(request: AddDirectoryToProjectRequest, root_directory = Depends(get_root_directory)):
-    project_name = request.project_name
-    directory = request.directory
-    add_directory_to_project(root_directory, project_name, directory)
-    return {"status": "ok"}
 
 @router.post("/upload_file", status_code=200, tags=["files"])
 async def upload_file(
@@ -34,14 +21,15 @@ async def upload_file(
     write_file_upload(root_directory, project_name, file_path, file)
     return {"status": "ok"}
 
-@router.delete("/delete_file", status_code=200, tags=["files"])
-async def delete_file(request: DeleteFileRequest, root_directory = Depends(get_root_directory)):
-    project_name = request.project_name
-    file_path = request.file_path
-    if _delete_file(root_directory, project_name, file_path):
-        return {"status": "ok"}
-    else:
-        raise HTTPException(status_code=404, detail="File not found")
+# TODO: Remove?
+# @router.delete("/delete_file", status_code=200, tags=["files"])
+# async def delete_file(request: DeleteFileRequest, root_directory = Depends(get_root_directory)):
+#     project_name = request.project_name
+#     file_path = request.file_path
+#     if _delete_file(root_directory, project_name, file_path):
+#         return {"status": "ok"}
+#     else:
+#         raise HTTPException(status_code=404, detail="File not found")
 
 @router.get("/list_project_files/{project_id}", response_model=List[str], tags=["files"])
 async def list_project_files(project_id: int, root_directory = Depends(get_root_directory), db=Depends(get_db)):

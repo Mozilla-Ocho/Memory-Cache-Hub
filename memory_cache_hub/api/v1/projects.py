@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 from memory_cache_hub.api.v1.depends import get_chroma_client, get_root_directory, get_db
-from memory_cache_hub.api.v1.types import ListProjectsResponse, DeleteProjectRequest, CreateProjectRequest, OkResponse, ErrorResponse
+from memory_cache_hub.api.v1.types import ListProjectsResponse, OkResponse, ErrorResponse
 from memory_cache_hub.core.files import delete_project_directory, create_empty_project_directory
 from memory_cache_hub.db.projects import db_create_project, db_list_projects, db_delete_project, db_create_project_directory, db_list_project_directories, db_delete_project_directory
 
@@ -12,7 +12,7 @@ async def list_projects(db=Depends(get_db)):
     return ListProjectsResponse(projects=projects)
 
 @router.post("/create_project", response_model=ListProjectsResponse, tags=["projects"])
-async def create_project(request: CreateProjectRequest,
+async def create_project(project_name: str,
                          chroma_client=Depends(get_chroma_client),
                          root_directory=Depends(get_root_directory),
                          db=Depends(get_db)):
@@ -22,7 +22,7 @@ async def create_project(request: CreateProjectRequest,
     return ListProjectsResponse(projects=[project])
 
 @router.delete("/delete_project", tags=["projects"])
-async def delete_project(request: DeleteProjectRequest,
+async def delete_project(project_id: int,
                          chroma_client=Depends(get_chroma_client),
                          root_directory=Depends(get_root_directory),
                          db=Depends(get_db)):

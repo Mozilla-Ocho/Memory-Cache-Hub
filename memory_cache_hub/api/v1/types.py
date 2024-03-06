@@ -24,33 +24,11 @@ class ApiConfig:
     embedding_model: str
     normalize_embeddings: bool
 
-class CreateProjectRequest(BaseModel):
-    project_name: Optional[str] = None
-
 class ListProjectsResponse(BaseModel):
     projects: List[Project]
 
-class DeleteProjectRequest(BaseModel):
-    project_id: int
-
-class GetOrCreateProjectRequest(BaseModel):
-    project_id: int
-    project_name: str
-
-class AddDirectoryToProjectRequest(BaseModel):
-    directory: str
-    project_name: str
-
-class FileUpload(BaseModel):
-    project_name: str
-    file_path: str
-
-class DeleteFileRequest(BaseModel):
-    project_name: str
-    file_path: str
-
 class SummarizeFileRequest(BaseModel):
-    project_name: str
+    project_id: str
     file_path: str
 
 # For SummarizeFileResponse, there are two types of responses:
@@ -63,8 +41,6 @@ class SummarizeFileResponse(BaseModel):
     summary: Optional[str] = None
     message: Optional[str] = None
 
-
-
 class IngestProjectFilesRequest(BaseModel):
     project_name: str
 
@@ -73,16 +49,13 @@ class IngestProjectFilesResponse(BaseModel):
     num_fragments: int
 
 class RagAskRequest(BaseModel):
-    project_name: str
+    project_id: str
     prompt: str
 
 class RagAskResponse(BaseModel):
     response: str
 
 class DownloadLlamafileByNameRequest(BaseModel):
-    llamafile_filename: str
-
-class CheckLlamafileStatusRequest(BaseModel):
     llamafile_filename: str
 
 class DownloadLlamafileByNameResponse(BaseModel):
