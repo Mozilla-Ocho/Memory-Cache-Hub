@@ -30,13 +30,19 @@ def ingest_project_files(
     if len(fragments) == 0:
         return {"status": "ok", "message": "No fragments found in the project files"}
 
-    chroma_collection.add(
-        ids=[fragment.fragment_id for fragment in fragments],
-        embeddings=[fragment.fragment_embedding for fragment in fragments],
-        metadatas=[asdict(fragment.fragment_metadata) for fragment in fragments],
-        documents=[fragment.fragment_text for fragment in fragments],
-    )
-    return IngestProjectFilesResponse(
-        num_files=len(file_paths),
-        num_fragments=len(fragments),
-    )
+    # If we had multiple fragments with the same ID, remove the duplicates
+    fragments = list({fragment.fragment_id: fragment for fragment in fragments}.values())
+
+    try:
+        chroma_collection.add(
+            ids=[fragment.fragment_id for fragment in fragments],
+            embeddings=[fragment.fragment_embedding for fragment in fragments],
+            metadatas=[asdict(fragment.fragment_metadata) for fragment in fragments],
+            documents=[fragment.fragment_text for fragment in fragments],
+        )
+        return IngestProjectFilesResponse(
+            num_files=len(file_paths),
+            num_fragments=len(fragments),
+        )
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
