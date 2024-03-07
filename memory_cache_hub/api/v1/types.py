@@ -28,7 +28,7 @@ class ListProjectsResponse(BaseModel):
     projects: List[Project]
 
 class SummarizeFileRequest(BaseModel):
-    project_id: str
+    project_id: int
     file_path: str
 
 # For SummarizeFileResponse, there are two types of responses:
@@ -49,7 +49,7 @@ class IngestProjectFilesResponse(BaseModel):
     num_fragments: int
 
 class RagAskRequest(BaseModel):
-    project_id: str
+    project_id: int
     prompt: str
 
 class RagAskResponse(BaseModel):

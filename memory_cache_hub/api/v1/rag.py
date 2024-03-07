@@ -29,19 +29,21 @@ def rag_ask(
     query_results = chroma_collection.query(query_texts=[prompt])
 
     big_content = ""
-    big_content += f"{prompt}\n"
     big_content += f"Consider the following context:\n"
     for i, result in enumerate(query_results['metadatas'][0]):
-        if i == 3:
+        if i == 2:
             break
         file_path = result['source_file_path']
         big_content += f"----File: {file_path}\n"
         big_content += f"{query_results['documents'][0][i]}\n"
 
+    big_content += f"Based on the context above, answer the following question:\n"
+    big_content += f"{prompt}\n"
+
     messages = [
         Message(
             role="system",
-            content="You are a helpful assistant.",
+            content="You are an AI assistant. The user will provide you fragments of documents to give you context to work with, and then ask you a question. First, read the document fragments. Then, answer the question at the end of the user's message. Minimize any other prose.",
         ),
         Message(
             role="user",
@@ -50,13 +52,12 @@ def rag_ask(
     ]
 
     #reply = ollama_completions(complete_url, complete_model, messages)
-    reply = openai_compatible_completions(complete_url, complete_model, messages)
-
-    print("\n\n\n--------\n")
-    print(prompt)
+    print("\n--------\n")
     print(big_content)
+    print("\n--------\n")
+    reply = openai_compatible_completions(complete_url, complete_model, messages)
     print(reply)
-    print("-------\n\n")
+    print("\n-------\n")
 
     return RagAskResponse(
         response=reply,
