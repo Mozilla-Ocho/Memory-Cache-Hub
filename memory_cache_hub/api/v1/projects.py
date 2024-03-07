@@ -16,7 +16,7 @@ async def create_project(project_name: str,
                          chroma_client=Depends(get_chroma_client),
                          root_directory=Depends(get_root_directory),
                          db=Depends(get_db)):
-    project = db_create_project(db, request.project_name or "New Project")
+    project = db_create_project(db, project_name or "New Project")
     collection = chroma_client.create_collection(f"project_id_{project.id}")
     create_empty_project_directory(root_directory, f"project_id_{project.id}")
     return ListProjectsResponse(projects=[project])
@@ -27,10 +27,9 @@ async def delete_project(project_id: int,
                          root_directory=Depends(get_root_directory),
                          db=Depends(get_db)):
     try:
-        project_id = request.project_id
-        project = db_delete_project(db, project_id)
-        collection = chroma_client.delete_collection(f"project_id_{project.id}")
-        delete_project_directory(root_directory, f"project_id_{project.id}")
+        db_delete_project(db, project_id)
+        collection = chroma_client.delete_collection(f"project_id_{project_id}")
+        delete_project_directory(root_directory, f"project_id_{project_id}")
         return OkResponse()
     except ValueError:
         return ErrorResponse(message="Project not found")

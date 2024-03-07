@@ -23,7 +23,7 @@ def db_delete_project(db, project_id: int):
     with Session(db) as session:
         project = session.query(Project).get(project_id)
         project.is_removed = True
-        session.add(project)
+        # session.add(project)
         session.commit()
         session.refresh(project)
         return project
@@ -47,7 +47,7 @@ def db_delete_project_directory(db, directory_id: int):
     with Session(db) as session:
         project_directory = session.query(ProjectDirectory).get(directory_id)
         project_directory.is_removed = True
-        session.add(project_directory)
+        # session.add(project_directory)
         session.commit()
         session.refresh(project_directory)
         return project_directory
