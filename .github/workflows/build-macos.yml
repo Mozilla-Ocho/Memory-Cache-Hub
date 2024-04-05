@@ -54,15 +54,28 @@ jobs:
         source venv/bin/activate
         pip install -r requirements.txt
 
-    - name: Build Memory Cache Hub
+    - name: Build Memory Cache Hub (--onedir)
       run: |
         cd Memory-Cache-Hub
         source venv/bin/activate
         pip install -r requirements.build.txt
-        python3.11 -m memory_cache_hub.build.build_memory_cache_hub --client-path ../Memory-Cache-Browser-Client/dist
+        python -m memory_cache_hub.build.build_memory_cache_hub --client-path ../Memory-Cache-Browser-Client/dist
 
-    - name: Upload Memory Cache Hub Artifact
+    - name: Upload Memory Cache Hub Artifacts (One Directory)
+      uses: actions/upload-artifact@v2
+      with:
+        name: memory_cache_dir_${{ runner.os }}_${{ github.sha }}
+        path: Memory-Cache-Hub/dist/memory_cache_hub
+
+    - name: Build Memory Cache Hub (--onefile)
+      run: |
+        cd Memory-Cache-Hub
+        source venv/bin/activate
+        pip install -r requirements.build.txt
+        python -m memory_cache_hub.build.build_memory_cache_hub --client-path ../Memory-Cache-Browser-Client/dist --onefile
+
+    - name: Upload Memory Cache Hub Artifacts (One File)
       uses: actions/upload-artifact@v2
       with:
         name: memory_cache_${{ runner.os }}_${{ github.sha }}
-        path: Memory-Cache-Hub/dist/
+        path: Memory-Cache-Hub/dist/memory_cache_hub
