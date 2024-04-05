@@ -7,6 +7,8 @@ def parse_arguments():
     parser.add_argument("--entry-point", type=str, required=False, help="The entry point for the executable.")
     parser.add_argument("--onefile", action="store_true", required=False, help="Build a single file executable.")
     parser.add_argument("--client-path", type=str, required=False, help="The path to the client directory.")
+    # Add a boolean argument indicating whether we're on windows
+    parser.add_argument("--windows", action="store_true", required=False, help="Build for Windows.")
     args = parser.parse_args()
 
     args.project_root = os.path.join(os.path.dirname(__file__), "..", "..")
@@ -25,10 +27,19 @@ def main():
     print(f"Building with args:", args)
 
     add_data_args = []
-    add_data_args += [
-        # Explicitly add the site-packages directory, because otherwise the executable will fail to find dependencies at runtime.
-        f'--add-data={os.path.join(args.project_root, "venv", "lib", "python3.11", "site-packages")}{os.pathsep}.'
-    ]
+
+    if args.windows:
+        print(f"Building for Windows.")
+        add_data_args += [
+            # Explicitly add the site-packages directory, because otherwise the executable will fail to find dependencies at runtime.
+            # On windows, Lib is capitalized.
+            f'--add-data={os.path.join(args.project_root, "venv", "Lib", "python3.11", "site-packages")}{os.pathsep}.'
+        ]
+    else:
+        add_data_args += [
+            # Explicitly add the site-packages directory, because otherwise the executable will fail to find dependencies at runtime.
+            f'--add-data={os.path.join(args.project_root, "venv", "lib", "python3.11", "site-packages")}{os.pathsep}.'
+        ]
     llamafile_infos_json = os.path.join(args.project_root, "memory_cache_hub", "llamafile", "llamafile_infos.json")
     add_data_args += [
         f'--add-data={llamafile_infos_json}{os.pathsep}.'
