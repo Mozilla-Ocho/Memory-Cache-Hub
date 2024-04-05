@@ -1,4 +1,6 @@
 import os
+import site
+from pathlib import Path
 
 def parse_arguments():
     import argparse
@@ -28,18 +30,14 @@ def main():
 
     add_data_args = []
 
-    if args.windows:
-        print(f"Building for Windows.")
-        add_data_args += [
-            # Explicitly add the site-packages directory, because otherwise the executable will fail to find dependencies at runtime.
-            # On windows, Lib is capitalized.
-            f'--add-data={os.path.join(args.project_root, "venv", "Lib", "python3.11", "site-packages")}{os.pathsep}.'
-        ]
-    else:
-        add_data_args += [
-            # Explicitly add the site-packages directory, because otherwise the executable will fail to find dependencies at runtime.
-            f'--add-data={os.path.join(args.project_root, "venv", "lib", "python3.11", "site-packages")}{os.pathsep}.'
-        ]
+    site_packages_path = site.getsitepackages()[0]
+    print("site_packages_path is:")
+    print(site_packages_path)
+    project_root = Path(args.project_root).resolve()
+    add_data_args += [
+        f'--add-data={Path(site_packages_path).resolve()}{os.pathsep}.'
+    ]
+
     llamafile_infos_json = os.path.join(args.project_root, "memory_cache_hub", "llamafile", "llamafile_infos.json")
     add_data_args += [
         f'--add-data={llamafile_infos_json}{os.pathsep}.'
