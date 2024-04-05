@@ -21,11 +21,12 @@ jobs:
       uses: actions/setup-node@v2
       with:
         node-version: '18.18.2'
-        cache: 'yarn'
 
     - name: Install Memory Cache Browser Client Dependencies
       run: |
         cd Memory-Cache-Browser-Client
+        corepack enable
+        yarn --version
         yarn install
 
     - name: Build Memory Cache Browser Client
