@@ -1,12 +1,15 @@
 name: Build Memory Cache MacOS
 
+# on:
+#   push:
+#     branches:
+#       - dev
+#   pull_request:
+#     branches:
+#       - dev
+
 on:
-  push:
-    branches:
-      - dev
-  pull_request:
-    branches:
-      - dev
+  workflow_dispatch:
 
 jobs:
   build:
