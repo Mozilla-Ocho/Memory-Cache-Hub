@@ -131,4 +131,3 @@ You may encounter an error similar to the following when running the release bui
 
 This error occurs when the build was made on a system with a newer version of `glibc` than the one on your system. Let us know if this happens to you because it means we need to build releases on an older system.
 
-
