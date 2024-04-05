@@ -143,10 +143,6 @@ def sync_project_files(db, root_directory: str, project_id: int):
     # Then, copy each directory into the project_uploads_directory
     source_directories = db_list_project_directories(db, project_id)
     project = db_get_project(db, project_id)
-    project_uploads_directory = get_project_uploads_directory(root_directory, project.name)
-    # empty the uploads directory
-    if os.path.exists(project_uploads_directory):
-        shutil.rmtree(project_uploads_directory)
 
     # If any of the source directories don't exist, return an error with a message
     for source_directory in source_directories:
@@ -155,6 +151,7 @@ def sync_project_files(db, root_directory: str, project_id: int):
             return {"status": "error", "message": f"Source directory {source_directory.path} does not exist"}
 
     for source_directory in source_directories:
+        remove_directory_from_project(root_directory, project.name, source_directory.path)
         add_directory_to_project(root_directory, project.name, source_directory.path)
 
     return {"status": "ok"}
