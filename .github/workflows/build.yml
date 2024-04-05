@@ -44,7 +44,19 @@ jobs:
       with:
         python-version: 3.11
 
+    - name: Cache Python dependencies
+      uses: actions/cache@v2
+      id: cache-python-deps
+      with:
+        path: |
+          Memory-Cache-Hub/venv/
+          ~/.cache/pip
+        key: ${{ runner.os }}-python-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-python-
+
     - name: Install Memory Cache Hub Dependencies
+      if: steps.cache-python-deps.outputs.cache-hit != 'true'
       run: |
         cd Memory-Cache-Hub
         python3.11 -m venv venv
@@ -56,7 +68,7 @@ jobs:
         cd Memory-Cache-Hub
         source venv/bin/activate
         pip install -r requirements.build.txt
-        python -m memory_cache_hub.build.build_memory_cache_hub
+        python3.11 -m memory_cache_hub.build.build_memory_cache_hub --client-path ../Memory-Cache-Browser-Client/dist
 
     - name: Zip the Memory Cache Hub Build
       run: |
