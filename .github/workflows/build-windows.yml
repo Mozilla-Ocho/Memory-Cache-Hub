@@ -61,13 +61,8 @@ jobs:
         pip install -r requirements.build.txt
         python -m memory_cache_hub.build.build_memory_cache_hub --client-path ../Memory-Cache-Browser-Client/dist
 
-    - name: Zip the Memory Cache Hub Build
-      shell: powershell
-      run: |
-        Compress-Archive -Path Memory-Cache-Hub\dist\memory_cache_hub\* -DestinationPath Memory-Cache-Hub\dist\memory_cache_hub.zip -Force
-
     - name: Upload Memory Cache Hub Artifact
       uses: actions/upload-artifact@v2
       with:
         name: memory_cache_${{ runner.os }}_${{ github.sha }}
-        path: Memory-Cache-Hub\dist\memory_cache_hub.zip
+        path: Memory-Cache-Hub/dist/
