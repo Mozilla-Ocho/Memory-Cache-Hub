@@ -51,7 +51,7 @@ jobs:
         path: |
           Memory-Cache-Hub/venv/
           ~/.cache/pip
-        key: ${{ runner.os }}-python-${{ hashFiles('**/requirements.txt') }}
+        key: ${{ runner.os }}-python-${{ hashFiles('Memory-Cache-Hub/requirements.txt') }}
         restore-keys: |
           ${{ runner.os }}-python-
 
