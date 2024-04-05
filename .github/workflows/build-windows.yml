@@ -30,7 +30,11 @@ jobs:
         cd Memory-Cache-Browser-Client
         corepack enable
         yarn --version
+        cp windows.yarnrc.yml .yarnrc.yml
+        cat .yarnrc.yml
         yarn install
+        yarn config list
+        yarn workspaces list --verbose
 
     - name: Build Memory Cache Browser Client
       run: |
