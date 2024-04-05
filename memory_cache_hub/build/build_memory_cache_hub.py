@@ -9,8 +9,6 @@ def parse_arguments():
     parser.add_argument("--entry-point", type=str, required=False, help="The entry point for the executable.")
     parser.add_argument("--onefile", action="store_true", required=False, help="Build a single file executable.")
     parser.add_argument("--client-path", type=str, required=False, help="The path to the client directory.")
-    # Add a boolean argument indicating whether we're on windows
-    parser.add_argument("--windows", action="store_true", required=False, help="Build for Windows.")
     args = parser.parse_args()
 
     args.project_root = os.path.join(os.path.dirname(__file__), "..", "..")
