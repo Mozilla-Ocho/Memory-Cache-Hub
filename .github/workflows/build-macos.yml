@@ -1,4 +1,4 @@
-name: Build Memory Cache Components
+name: Build Memory Cache MacOS
 
 on:
   push:
@@ -44,18 +44,7 @@ jobs:
       with:
         python-version: 3.11
 
-    - name: Cache Python dependencies
-      uses: actions/cache@v2
-      with:
-        path: |
-          Memory-Cache-Hub/venv/
-          ~/Library/Caches/pip
-        key: ${{ runner.os }}-python-${{ hashFiles('Memory-Cache-Hub/requirements.txt') }}
-        restore-keys: |
-          ${{ runner.os }}-python-
-
     - name: Install Memory Cache Hub Dependencies
-      if: steps.cache-python-deps.outputs.cache-hit != 'true'
       run: |
         cd Memory-Cache-Hub
         python3.11 -m venv venv

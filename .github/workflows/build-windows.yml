@@ -1,4 +1,4 @@
-name: Build Memory Cache Components
+name: Build Memory Cache Windows
 
 on:
   push:
@@ -10,7 +10,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: windows-latest
     steps:
     - uses: actions/checkout@v2
       with:
@@ -21,12 +21,11 @@ jobs:
       uses: actions/setup-node@v2
       with:
         node-version: '18.18.2'
+        cache: 'yarn'
 
     - name: Install Memory Cache Browser Client Dependencies
       run: |
         cd Memory-Cache-Browser-Client
-        sudo corepack enable
-        yarn --version
         yarn install
 
     - name: Build Memory Cache Browser Client
@@ -45,27 +44,26 @@ jobs:
         python-version: 3.11
 
     - name: Install Memory Cache Hub Dependencies
-      if: steps.cache-python-deps.outputs.cache-hit != 'true'
       run: |
         cd Memory-Cache-Hub
-        python3.11 -m venv venv
-        source venv/bin/activate
+        python -m venv venv
+        venv\Scripts\activate
         pip install -r requirements.txt
 
     - name: Build Memory Cache Hub
       run: |
         cd Memory-Cache-Hub
-        source venv/bin/activate
+        venv\Scripts\activate
         pip install -r requirements.build.txt
-        python3.11 -m memory_cache_hub.build.build_memory_cache_hub --client-path ../Memory-Cache-Browser-Client/dist
+        python -m memory_cache_hub.build.build_memory_cache_hub --client-path ../Memory-Cache-Browser-Client/dist
 
     - name: Zip the Memory Cache Hub Build
+      shell: powershell
       run: |
-        cd Memory-Cache-Hub/dist
-        zip -r memory_cache_hub.zip memory_cache_hub
+        Compress-Archive -Path Memory-Cache-Hub\dist\memory_cache_hub\* -DestinationPath Memory-Cache-Hub\dist\memory_cache_hub.zip -Force
 
     - name: Upload Memory Cache Hub Artifact
       uses: actions/upload-artifact@v2
       with:
         name: memory_cache_${{ runner.os }}_${{ github.sha }}
-        path: Memory-Cache-Hub/dist/memory_cache_hub.zip
+        path: Memory-Cache-Hub\dist\memory_cache_hub.zip

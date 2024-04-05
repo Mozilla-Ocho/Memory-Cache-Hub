@@ -1,4 +1,4 @@
-name: Build Memory Cache Components
+name: Build Memory Cache Ubuntu
 
 on:
   push:
@@ -45,7 +45,6 @@ jobs:
         python-version: 3.11
 
     - name: Install Memory Cache Hub Dependencies
-      if: steps.cache-python-deps.outputs.cache-hit != 'true'
       run: |
         cd Memory-Cache-Hub
         python3.11 -m venv venv
