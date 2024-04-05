@@ -10,7 +10,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: macos-latest
     steps:
     - uses: actions/checkout@v2
       with:
@@ -25,7 +25,7 @@ jobs:
     - name: Install Memory Cache Browser Client Dependencies
       run: |
         cd Memory-Cache-Browser-Client
-        sudo corepack enable
+        corepack enable
         yarn --version
         yarn install
 
@@ -43,6 +43,16 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: 3.11
+
+    - name: Cache Python dependencies
+      uses: actions/cache@v2
+      with:
+        path: |
+          Memory-Cache-Hub/venv/
+          ~/Library/Caches/pip
+        key: ${{ runner.os }}-python-${{ hashFiles('Memory-Cache-Hub/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-python-
 
     - name: Install Memory Cache Hub Dependencies
       if: steps.cache-python-deps.outputs.cache-hit != 'true'
