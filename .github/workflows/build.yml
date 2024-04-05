@@ -12,27 +12,27 @@ jobs:
   build:
     runs-on: ubuntu-22.04
     steps:
-    - uses: actions/checkout@v2
-      with:
-        repository: 'johnshaughnessy/Memory-Cache-Browser-Client'
-        path: 'Memory-Cache-Browser-Client'
+    # - uses: actions/checkout@v2
+    #   with:
+    #     repository: 'johnshaughnessy/Memory-Cache-Browser-Client'
+    #     path: 'Memory-Cache-Browser-Client'
 
-    - name: Install Node.js and Yarn
-      uses: actions/setup-node@v2
-      with:
-        node-version: '18.18.2'
+    # - name: Install Node.js and Yarn
+    #   uses: actions/setup-node@v2
+    #   with:
+    #     node-version: '18.18.2'
 
-    - name: Install Memory Cache Browser Client Dependencies
-      run: |
-        cd Memory-Cache-Browser-Client
-        sudo corepack enable
-        yarn --version
-        yarn install
+    # - name: Install Memory Cache Browser Client Dependencies
+    #   run: |
+    #     cd Memory-Cache-Browser-Client
+    #     sudo corepack enable
+    #     yarn --version
+    #     yarn install
 
-    - name: Build Memory Cache Browser Client
-      run: |
-        cd Memory-Cache-Browser-Client
-        yarn parcel build src/index.html
+    # - name: Build Memory Cache Browser Client
+    #   run: |
+    #     cd Memory-Cache-Browser-Client
+    #     yarn parcel build src/index.html
 
     - uses: actions/checkout@v2
       with:
@@ -63,20 +63,20 @@ jobs:
         source venv/bin/activate
         pip install -r requirements.txt
 
-    - name: Build Memory Cache Hub
-      run: |
-        cd Memory-Cache-Hub
-        source venv/bin/activate
-        pip install -r requirements.build.txt
-        python3.11 -m memory_cache_hub.build.build_memory_cache_hub --client-path ../Memory-Cache-Browser-Client/dist
+    # - name: Build Memory Cache Hub
+    #   run: |
+    #     cd Memory-Cache-Hub
+    #     source venv/bin/activate
+    #     pip install -r requirements.build.txt
+    #     python3.11 -m memory_cache_hub.build.build_memory_cache_hub --client-path ../Memory-Cache-Browser-Client/dist
 
-    - name: Zip the Memory Cache Hub Build
-      run: |
-        cd Memory-Cache-Hub/dist
-        zip -r memory_cache_hub.zip memory_cache_hub
+    # - name: Zip the Memory Cache Hub Build
+    #   run: |
+    #     cd Memory-Cache-Hub/dist
+    #     zip -r memory_cache_hub.zip memory_cache_hub
 
-    - name: Upload Memory Cache Hub Artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: memory_cache_hub
-        path: Memory-Cache-Hub/dist/memory_cache_hub.zip
+    # - name: Upload Memory Cache Hub Artifact
+    #   uses: actions/upload-artifact@v2
+    #   with:
+    #     name: memory_cache_hub
+    #     path: Memory-Cache-Hub/dist/memory_cache_hub.zip
