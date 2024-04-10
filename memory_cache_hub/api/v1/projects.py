@@ -2,8 +2,9 @@ from fastapi import APIRouter, Depends
 from memory_cache_hub.api.v1.depends import get_chroma_client, get_root_directory, get_db
 from memory_cache_hub.api.v1.types import ListProjectsResponse, OkResponse, ErrorResponse
 from memory_cache_hub.core.files import delete_project_directory, create_empty_project_directory
-from memory_cache_hub.db.projects import db_create_project, db_list_projects, db_delete_project, db_create_project_directory, db_list_project_directories, db_delete_project_directory, db_get_project
+from memory_cache_hub.db.projects import db_create_project, db_list_projects, db_delete_project, db_create_project_directory, db_list_project_directories, db_delete_project_directory, db_get_project, db_update_project
 from memory_cache_hub.core.files import remove_directory_from_project
+from memory_cache_hub.db.types import Project
 
 router = APIRouter()
 
@@ -21,6 +22,11 @@ async def create_project(project_name: str,
     collection = chroma_client.create_collection(f"project_id_{project.id}")
     create_empty_project_directory(root_directory, f"project_id_{project.id}")
     return ListProjectsResponse(projects=[project])
+
+@router.post("/update_project", response_model=Project, tags=["projects"])
+async def update_project(project_id: int, project_name: str, db=Depends(get_db)):
+    project = db_update_project(db, project_id, project_name)
+    return project
 
 @router.delete("/delete_project", tags=["projects"])
 async def delete_project(project_id: int,

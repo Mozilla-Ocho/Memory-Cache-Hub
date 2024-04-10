@@ -9,6 +9,14 @@ def db_create_project(db, project_name: str):
         session.refresh(project)
         return project
 
+def db_update_project(db, project_id: int, project_name: str):
+    with Session(db) as session:
+        project = session.query(Project).get(project_id)
+        project.name = project_name
+        session.commit()
+        session.refresh(project)
+        return project
+
 def db_list_projects(db):
     with Session(db) as session:
         projects = session.query(Project).filter(Project.is_removed == False).all()
