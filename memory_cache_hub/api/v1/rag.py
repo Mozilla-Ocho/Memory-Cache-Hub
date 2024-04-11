@@ -62,3 +62,30 @@ def rag_ask(
     return RagAskResponse(
         response=reply,
     )
+
+@router.post("/vector_db_query", status_code=200, tags=["rag"])
+def vector_db_query(
+        body: RagAskRequest,
+        root_directory: str = Depends(get_root_directory),
+        chroma_client = Depends(get_chroma_client),
+        chroma_embedding_function = Depends(get_embedding_function),
+        db=Depends(get_db)
+):
+    prompt = body.prompt
+    project = db_get_project(db, body.project_id)
+    chroma_collection = chroma_collection_for_project(chroma_client, chroma_embedding_function, project.name)
+    query_results = chroma_collection.query(query_texts=[prompt])
+    response = []
+
+    for i, result in enumerate(query_results['metadatas'][0]):
+        file_path = result['source_file_path']
+        file_content = f"{query_results['documents'][0][i]}"
+        distance = query_results['distances'][0][i]
+
+        response.append({
+            'file_path': file_path,
+            'file_content': file_content,
+            'distance': distance,
+        })
+
+    return response

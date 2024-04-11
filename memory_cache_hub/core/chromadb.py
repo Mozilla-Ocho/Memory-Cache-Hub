@@ -48,7 +48,8 @@ def chroma_embedding_function(model_name: str, device: str, normalize_embeddings
 def chroma_collection_for_project(chroma_client: PersistentClient,
                                   embedding_function: Any,
                                   project_name: str):
+    sanitized_project_name = project_name.replace(" ", "_").replace("/", "_")
     return chroma_client.get_or_create_collection(
-        project_name,
+        sanitized_project_name,
         metadata={"project_name": project_name},
         embedding_function=embedding_function)

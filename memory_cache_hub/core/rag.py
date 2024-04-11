@@ -28,6 +28,9 @@ def fragments_from_files(file_paths: List[str],
     """Generate document fragments for the given file_paths."""
     fragments = []
     for file_path in file_paths:
+        if file_path.endswith(".svg"):
+            print(f"Skipping SVG file {file_path}.")
+            continue
         try:
             file_content = open(file_path, encoding="utf-8").read()
         except UnicodeDecodeError:
