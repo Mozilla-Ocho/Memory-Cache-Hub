@@ -16,22 +16,6 @@
         "url": "https://huggingface.co/jartine/Mistral-7B-Instruct-v0.2-llamafile/resolve/main/mistral-7b-instruct-v0.2.Q5_K_M.llamafile?download=true"
     },
     {
-        "model": "Mixtral-8x7B-Instruct",
-        "size": "30.03 GB",
-        "license": "Apache 2.0",
-        "license_url": "https://choosealicense.com/licenses/apache-2.0/",
-        "filename": "mixtral-8x7b-instruct-v0.1.Q5_K_M.llamafile",
-        "url": "https://huggingface.co/jartine/Mixtral-8x7B-Instruct-v0.1-llamafile/resolve/main/mixtral-8x7b-instruct-v0.1.Q5_K_M.llamafile?download=true"
-    },
-    {
-        "model": "WizardCoder-Python-34B",
-        "size": "22.23 GB",
-        "license": "LLaMA 2",
-        "license_url": "https://ai.meta.com/resources/models-and-libraries/llama-downloads/",
-        "filename": "wizardcoder-python-34b-v1.0.Q5_K_M.llamafile",
-        "url": "https://huggingface.co/jartine/WizardCoder-Python-34B-V1.0-llamafile/resolve/main/wizardcoder-python-34b-v1.0.Q5_K_M.llamafile?download=true"
-    },
-    {
         "model": "WizardCoder-Python-13B",
         "size": "7.33 GB",
         "license": "LLaMA 2",
