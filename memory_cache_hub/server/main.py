@@ -76,6 +76,8 @@ def create_app(args):
         app.mount("/", StaticFiles(directory=args.client_path, html=True ), name="static")
     elif getattr(sys, 'frozen', False) and os.path.exists(os.path.join(sys._MEIPASS, "client")):
         app.mount("/", StaticFiles(directory=os.path.join(sys._MEIPASS, "client"), html=True), name="static")
+    elif os.path.exists(os.path.join(os.path.dirname(__file__), "client")):
+        app.mount("/", StaticFiles(directory=os.path.join(os.path.dirname(__file__), "client"), html=True), name="static")
 
     return app
 
@@ -99,10 +101,18 @@ def parse_arguments():
 
 def main():
     import uvicorn
+    import webbrowser
 #    from multiprocessing import freeze_support
 #    freeze_support() # See https://pyinstaller.org/en/stable/common-issues-and-pitfalls.html#multi-processing
     args = parse_arguments()
     app = create_app(args)
+    # Open a web browser to show the client
+
+    browser_friendly_host_name = args.host
+    if args.host == "0.0.0.0":
+        browser_friendly_host_name = "localhost"
+    print("hello")
+    webbrowser.open_new(f"http://{browser_friendly_host_name}:{args.port}")
     uvicorn.run(app, host=args.host, port=args.port)
 
 if __name__ == "__main__":
