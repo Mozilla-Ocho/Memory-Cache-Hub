@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from memory_cache_hub.api.v1.depends import get_llamafile_manager
 from memory_cache_hub.api.v1.types import DownloadLlamafileByNameRequest, DownloadLlamafileByNameResponse, LlamafileDownloadStatusResponse, StartLlamafileResponse, StopLlamafileResponse
-from memory_cache_hub.llamafile.llamafile_manager import get_llamafile_info_by_filename, download_llamafile, start_llamafile, stop_llamafile, has_llamafile, delete_llamafile
+from memory_cache_hub.llamafile.llamafile_manager import get_llamafile_info_by_filename, download_llamafile, start_llamafile, stop_llamafile, has_llamafile, delete_llamafile, running_llamafile_info
 import os
 import shutil
 
@@ -44,7 +44,7 @@ async def api_start_llamafile(
     llamafile_info = get_llamafile_info_by_filename(llamafile_manager, llamafile_filename)
     if llamafile_info is None:
         return StartLlamafileResponse(status="error", message="Llamafile not found")
-    if start_llamafile(llamafile_manager, llamafile_info):
+    if await start_llamafile(llamafile_manager, llamafile_info):
         return StartLlamafileResponse(status="success", message="Llamafile started")
     else:
         return StartLlamafileResponse(status="error", message="Llamafile not found")
@@ -76,3 +76,8 @@ async def api_delete_llamafile(
         return {"status": "success", "message": "Llamafile deleted"}
     else:
         return {"status": "error", "message": "Llamafile not found"}
+
+# Create a route to call running_llamafile_info, which will return the llamafile info of the running llamafile, if any, or None.
+@router.get("/running_llamafile_info", status_code=200, tags=["llamafile"])
+async def api_running_llamafile_info(llamafile_manager = Depends(get_llamafile_manager)):
+    return await running_llamafile_info(llamafile_manager)

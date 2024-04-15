@@ -22,7 +22,8 @@ def download_llamafile(llamafile_manager: LlamafileManager, llamafile_info: Llam
     llamafile_manager.download_handles.append(download_handle)
     return download_handle
 
-def start_llamafile(llamafile_manager: LlamafileManager, llamafile_info: LlamafileInfo):
+async def start_llamafile(llamafile_manager: LlamafileManager, llamafile_info: LlamafileInfo):
+    await stop_all_running_llamafiles(llamafile_manager)
     run_handle = RunHandle(
         llamafile_info=llamafile_info,
         llamafile_store_path=llamafile_manager.llamafile_store_path,
@@ -42,6 +43,29 @@ async def stop_llamafile(llamafile_manager: LlamafileManager, llamafile_info: Ll
             return True
     print(f"No running llamafile found for {llamafile_info.filename}.")
     return False
+
+async def is_running_llamafile(llamafile_manager: LlamafileManager, llamafile_info: LlamafileInfo):
+    for run_handle in llamafile_manager.run_handles:
+        if run_handle.llamafile_info.filename == llamafile_info.filename:
+            return run_handle.is_running()
+    return False
+
+async def is_running_any_llamafile(llamafile_manager: LlamafileManager):
+    for run_handle in llamafile_manager.run_handles:
+        if run_handle.is_running():
+            return True
+    return False
+
+async def running_llamafile_info(llamafile_manager: LlamafileManager):
+    for run_handle in llamafile_manager.run_handles:
+        if run_handle.is_running():
+            return run_handle.llamafile_info
+    return None
+
+async def stop_all_running_llamafiles(llamafile_manager: LlamafileManager):
+    for run_handle in llamafile_manager.run_handles:
+        if run_handle.is_running:
+            await stop_llamafile(llamafile_manager, run_handle.llamafile_info)
 
 def has_llamafile(llamafile_manager: LlamafileManager, llamafile_info: LlamafileInfo):
     # Check if the file is already downloaded

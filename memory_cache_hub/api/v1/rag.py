@@ -1,4 +1,4 @@
-from memory_cache_hub.api.v1.depends import get_root_directory, get_chroma_client, get_embedding_function, get_completions_url, get_completions_model, get_db
+from memory_cache_hub.api.v1.depends import get_root_directory, get_chroma_client, get_embedding_function, get_completions_url, get_completions_model, get_db, get_projects_waiting_for_chat
 from memory_cache_hub.api.v1.types import RagAskRequest, RagAskResponse
 from memory_cache_hub.core.types import Message
 from memory_cache_hub.core.files import get_project_uploads_directory, list_project_file_uploads
@@ -21,12 +21,14 @@ def rag_ask(
         complete_model: str = Depends(get_completions_model),
         chroma_client = Depends(get_chroma_client),
         chroma_embedding_function = Depends(get_embedding_function),
+        projects_waiting_for_chat = Depends(get_projects_waiting_for_chat),
         db=Depends(get_db)
 ):
     print("GOT RAG ASK REQUEST:")
     print(body)
     prompt = body.prompt
     project = db_get_project(db, body.project_id)
+    projects_waiting_for_chat.append(body.project_id)
     chroma_collection = chroma_collection_for_project(chroma_client, chroma_embedding_function, project.name)
     query_results = chroma_collection.query(query_texts=[prompt])
 
@@ -63,6 +65,7 @@ def rag_ask(
         reply = openai_compatible_completions(complete_url, complete_model, messages)
 
     except Exception as e:
+        projects_waiting_for_chat.remove(body.project_id)
         return RagAskResponse(
             status="error",
             message=str(e)
@@ -71,6 +74,7 @@ def rag_ask(
     print(reply)
     print("\n-------\n")
 
+    projects_waiting_for_chat.remove(body.project_id)
     return RagAskResponse(
         status="ok",
         response=reply
@@ -102,3 +106,12 @@ def vector_db_query(
         })
 
     return response
+
+@router.post("/check_waiting_for_chat_status", status_code=200, tags=["rag"])
+def check_waiting_for_chat_status(
+        project_id: int,
+        projects_waiting_for_chat = Depends(get_projects_waiting_for_chat)
+):
+    if project_id in projects_waiting_for_chat:
+        return {"status": "ok", "isWaiting": True, "message": "Project is waiting for chat"}
+    return {"status": "ok", "isWaiting": False, "message": "Project is not waiting for chat"}

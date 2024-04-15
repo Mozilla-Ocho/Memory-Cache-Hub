@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends
-from memory_cache_hub.api.v1.depends import get_root_directory, get_chroma_client, get_embedding_function, get_db
+from memory_cache_hub.api.v1.depends import get_root_directory, get_chroma_client, get_embedding_function, get_db, get_projects_ingesting_files
 from memory_cache_hub.api.v1.types import IngestProjectFilesRequest, IngestProjectFilesResponse
 from memory_cache_hub.core.files import get_project_uploads_directory, list_project_file_uploads
 from memory_cache_hub.core.chromadb import chroma_collection_for_project
@@ -10,14 +10,27 @@ import os
 
 router = APIRouter()
 
+@router.post("/check_ingestion_status", status_code=200, tags=["ingest"])
+def check_ingestion_status(
+        project_id: int,
+        projects_ingesting_files = Depends(get_projects_ingesting_files)
+):
+    if project_id in projects_ingesting_files:
+        return {"status": "ok", "isIngesting": True, "message": "Project is ingesting files"}
+    return {"status": "ok", "isIngesting": False, "message": "Project is not ingesting files"}
+
 @router.post("/ingest_project_files", status_code=200, tags=["ingest"])
 def ingest_project_files(
         project_id: int,
         root_directory: str = Depends(get_root_directory),
         chroma_client = Depends(get_chroma_client),
         chroma_embedding_function = Depends(get_embedding_function),
+        projects_ingesting_files = Depends(get_projects_ingesting_files),
         db = Depends(get_db)
 ):
+    if project_id in projects_ingesting_files:
+        return {"status": "error", "message": "Project is already ingesting files"}
+    projects_ingesting_files.append(project_id)
     project = db_get_project(db, project_id)
     project_files = list_project_file_uploads(root_directory, project.name)
     chroma_collection = chroma_collection_for_project(chroma_client, chroma_embedding_function, project.name)
@@ -39,6 +52,8 @@ def ingest_project_files(
 
     fragments = fragments_from_files(file_paths, 1000, 200, chroma_embedding_function)
     if len(fragments) == 0:
+        # Remove the project_id from the list of projects ingesting files
+        projects_ingesting_files.remove(project_id)
         return {"status": "ok", "message": "No fragments found in the project files"}
 
     # If we had multiple fragments with the same ID, remove the duplicates
@@ -51,9 +66,12 @@ def ingest_project_files(
             metadatas=[asdict(fragment.fragment_metadata) for fragment in fragments],
             documents=[fragment.fragment_text for fragment in fragments],
         )
+        projects_ingesting_files.remove(project_id)
         return IngestProjectFilesResponse(
+
             num_files=len(file_paths),
             num_fragments=len(fragments),
         )
     except Exception as e:
+        projects_ingesting_files.remove(project_id)
         return {"status": "error", "message": str(e)}

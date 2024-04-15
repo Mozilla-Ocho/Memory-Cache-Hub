@@ -16,11 +16,15 @@ api_config = None
 chroma = None
 llamafile_manager = None
 db = None
+projects_ingesting_files = []
+projects_waiting_for_chat = []
 
 get_api_config = lambda: api_config
 get_chroma = lambda: chroma
 get_llamafile_manager = lambda: llamafile_manager
 get_db = lambda: db
+get_projects_ingesting_files = lambda: projects_ingesting_files
+get_projects_waiting_for_chat = lambda: projects_waiting_for_chat
 
 def set_api_config(config: ApiConfig):
     global api_config
