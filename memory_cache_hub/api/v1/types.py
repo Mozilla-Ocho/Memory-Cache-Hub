@@ -53,7 +53,9 @@ class RagAskRequest(BaseModel):
     prompt: str
 
 class RagAskResponse(BaseModel):
-    response: str
+    status: str
+    message: Optional[str] = None
+    response: Optional[str] = None
 
 class DownloadLlamafileByNameRequest(BaseModel):
     llamafile_filename: str

@@ -23,6 +23,8 @@ def rag_ask(
         chroma_embedding_function = Depends(get_embedding_function),
         db=Depends(get_db)
 ):
+    print("GOT RAG ASK REQUEST:")
+    print(body)
     prompt = body.prompt
     project = db_get_project(db, body.project_id)
     chroma_collection = chroma_collection_for_project(chroma_client, chroma_embedding_function, project.name)
@@ -31,12 +33,13 @@ def rag_ask(
     big_content = ""
     big_content += f"Consider the following context:\n"
     for i, result in enumerate(query_results['metadatas'][0]):
-        if i == 2:
+        if i == 5:
             break
         file_path = result['source_file_path']
         big_content += f"----File: {file_path}\n"
         big_content += f"{query_results['documents'][0][i]}\n"
 
+    big_content += f"-----\n"
     big_content += f"Based on the context above, answer the following question:\n"
     big_content += f"{prompt}\n"
 
@@ -55,12 +58,22 @@ def rag_ask(
     print("\n--------\n")
     print(big_content)
     print("\n--------\n")
-    reply = openai_compatible_completions(complete_url, complete_model, messages)
+    try:
+        print(complete_url)
+        reply = openai_compatible_completions(complete_url, complete_model, messages)
+
+    except Exception as e:
+        return RagAskResponse(
+            status="error",
+            message=str(e)
+        )
+
     print(reply)
     print("\n-------\n")
 
     return RagAskResponse(
-        response=reply,
+        status="ok",
+        response=reply
     )
 
 @router.post("/vector_db_query", status_code=200, tags=["rag"])

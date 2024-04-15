@@ -7,8 +7,11 @@ from hashlib import md5
 from typing import List
 from memory_cache_hub.core.chromadb import SentenceTransformerEmbeddingFunction
 from memory_cache_hub.core.types import FragmentMetadata, Fragment
+from pypdf import PdfReader
+
 import os
 import sys
+
 
 def split_text(text: str, chunk_size: int, chunk_overlap: int) -> List[str]:
     """Split text into chunks of the specified size with the specified overlap."""
@@ -31,13 +34,29 @@ def fragments_from_files(file_paths: List[str],
         if file_path.endswith(".svg"):
             print(f"Skipping SVG file {file_path}.")
             continue
-        try:
-            file_content = open(file_path, encoding="utf-8").read()
-        except UnicodeDecodeError:
-            print(f"Skipping file {file_path} due to UnicodeDecodeError")
-            continue
 
-        chunks = split_text(file_content, chunk_size, chunk_overlap)
+        if file_path.endswith(".pdf"):
+            print(f"Processing PDF file {file_path}")
+            # Extract text from PDF files
+            reader = PdfReader(file_path)
+            number_of_pages = len(reader.pages)
+            chunks = []
+            for page_index in range(number_of_pages):
+                try:
+                    text = reader.pages[page_index].extract_text()
+                    page_chunks = split_text(text, chunk_size, chunk_overlap)
+                    chunks.extend(page_chunks)
+                except Exception as e:
+                    print(f"Skipping page {page_index} of file {file_path} due to error: {e}")
+                    continue
+        else:
+            try:
+                file_content = open(file_path, encoding="utf-8").read()
+                chunks = split_text(file_content, chunk_size, chunk_overlap)
+            except UnicodeDecodeError:
+                print(f"Skipping file {file_path} due to UnicodeDecodeError")
+                continue
+
         for i, chunk in enumerate(chunks):
             fragment = Fragment(
                 fragment_id=md5_hash(chunk),

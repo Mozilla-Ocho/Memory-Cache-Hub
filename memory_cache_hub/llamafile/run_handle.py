@@ -47,6 +47,7 @@ class RunHandle:
             enable_gpu = False
             if enable_gpu:
                 args += ["--ngl", "999"]
+            print("STARTING llamafile with args: ", args, flush=True)
             self.process = await asyncio.create_subprocess_exec(full_file_path,
                                                                 *args,
                                                                 stdout=asyncio.subprocess.PIPE,

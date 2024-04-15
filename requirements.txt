@@ -6,6 +6,7 @@ chromadb
 fastapi
 pathspec
 pydantic
+pypdf
 python-multipart
 sentence_transformers
 sqlmodel
