@@ -36,18 +36,24 @@ def ingest_project_files(
     chroma_collection = chroma_collection_for_project(chroma_client, chroma_embedding_function, project.name)
     # Delete the collection because we are going to re-ingest all the files
     # chroma_client.delete_collection(chroma_collection.name)
-    chroma_collection = chroma_collection_for_project(chroma_client, chroma_embedding_function, project.name)
+    #chroma_collection = chroma_collection_for_project(chroma_client, chroma_embedding_function, project.name)
     # Prepend root_direct to each project_files path
     file_paths = [os.path.join(root_directory, project_file) for project_file in project_files]
     # Filter the file_paths such that only the files that have not been ingested are included
     filtered_file_paths = []
     for file_path in file_paths:
         query_results = chroma_collection.query(query_texts=[""], where={"source_file_path": file_path})
-        if len(query_results["ids"][0]) == 0:
+        did_already_ingest_file = False
+        for metadata in query_results["metadatas"][0]:
+            if metadata["source_file_path"] == file_path:
+                print(f"ALREADY INGESTED FILE {file_path}")
+                did_already_ingest_file = True
+                break
+
+        if not did_already_ingest_file:
             print(f"ADDING FILE {file_path}")
             filtered_file_paths.append(file_path)
 
-    
     file_paths = filtered_file_paths
 
     fragments = fragments_from_files(file_paths, 1000, 200, chroma_embedding_function)
