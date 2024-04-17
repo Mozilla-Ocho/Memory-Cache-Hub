@@ -12,7 +12,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
       with:
-        repository: 'johnshaughnessy/Memory-Cache-Browser-Client'
+        repository: 'Mozilla-Ocho/Memory-Cache-Browser-Client'
         path: 'Memory-Cache-Browser-Client'
 
     - name: Install Node.js and Yarn
@@ -36,7 +36,7 @@ jobs:
 
     - uses: actions/checkout@v2
       with:
-        repository: 'johnshaughnessy/Memory-Cache-Hub'
+        repository: 'Mozilla-Ocho/Memory-Cache-Hub'
         path: 'Memory-Cache-Hub'
 
     - name: Set up Python 3.11
