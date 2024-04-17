@@ -3,74 +3,74 @@ name: Build Memory Cache MacOS
 on:
   push:
     branches:
-      - main
+      - release
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: macos-latest
     steps:
-    - uses: actions/checkout@v2
-      with:
-        repository: 'Mozilla-Ocho/Memory-Cache-Browser-Client'
-        path: 'Memory-Cache-Browser-Client'
+      - uses: actions/checkout@v2
+        with:
+          repository: "Mozilla-Ocho/Memory-Cache-Browser-Client"
+          path: "Memory-Cache-Browser-Client"
 
-    - name: Install Node.js and Yarn
-      uses: actions/setup-node@v2
-      with:
-        node-version: '18.18.2'
+      - name: Install Node.js and Yarn
+        uses: actions/setup-node@v2
+        with:
+          node-version: "18.18.2"
 
-    - name: Install Memory Cache Browser Client Dependencies
-      run: |
-        cd Memory-Cache-Browser-Client
-        corepack enable
-        yarn --version
-        yarn install
+      - name: Install Memory Cache Browser Client Dependencies
+        run: |
+          cd Memory-Cache-Browser-Client
+          corepack enable
+          yarn --version
+          yarn install
 
-    - name: Build Memory Cache Browser Client
-      run: |
-        cd Memory-Cache-Browser-Client
-        yarn parcel build src/index.html
+      - name: Build Memory Cache Browser Client
+        run: |
+          cd Memory-Cache-Browser-Client
+          yarn parcel build src/index.html
 
-    - uses: actions/checkout@v2
-      with:
-        repository: 'Mozilla-Ocho/Memory-Cache-Hub'
-        path: 'Memory-Cache-Hub'
+      - uses: actions/checkout@v2
+        with:
+          repository: "Mozilla-Ocho/Memory-Cache-Hub"
+          path: "Memory-Cache-Hub"
 
-    - name: Set up Python 3.11
-      uses: actions/setup-python@v2
-      with:
-        python-version: 3.11
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.11
 
-    - name: Install Memory Cache Hub Dependencies
-      run: |
-        cd Memory-Cache-Hub
-        python3.11 -m venv venv
-        source venv/bin/activate
-        pip install -r requirements.txt
+      - name: Install Memory Cache Hub Dependencies
+        run: |
+          cd Memory-Cache-Hub
+          python3.11 -m venv venv
+          source venv/bin/activate
+          pip install -r requirements.txt
 
-    - name: Build Memory Cache Hub (--onedir)
-      run: |
-        cd Memory-Cache-Hub
-        source venv/bin/activate
-        pip install -r requirements.build.txt
-        python -m memory_cache_hub.build.build_memory_cache_hub --client-path ../Memory-Cache-Browser-Client/dist
+      - name: Build Memory Cache Hub (--onedir)
+        run: |
+          cd Memory-Cache-Hub
+          source venv/bin/activate
+          pip install -r requirements.build.txt
+          python -m memory_cache_hub.build.build_memory_cache_hub --client-path ../Memory-Cache-Browser-Client/dist
 
-    - name: Upload Memory Cache Hub Artifacts (One Directory)
-      uses: actions/upload-artifact@v2
-      with:
-        name: memory_cache_dir_${{ runner.os }}_${{ github.sha }}
-        path: Memory-Cache-Hub/dist/memory_cache_hub
+      - name: Upload Memory Cache Hub Artifacts (One Directory)
+        uses: actions/upload-artifact@v2
+        with:
+          name: memory_cache_dir_${{ runner.os }}_${{ github.sha }}
+          path: Memory-Cache-Hub/dist/memory_cache_hub
 
-    - name: Build Memory Cache Hub (--onefile)
-      run: |
-        cd Memory-Cache-Hub
-        source venv/bin/activate
-        pip install -r requirements.build.txt
-        python -m memory_cache_hub.build.build_memory_cache_hub --client-path ../Memory-Cache-Browser-Client/dist --onefile
+      - name: Build Memory Cache Hub (--onefile)
+        run: |
+          cd Memory-Cache-Hub
+          source venv/bin/activate
+          pip install -r requirements.build.txt
+          python -m memory_cache_hub.build.build_memory_cache_hub --client-path ../Memory-Cache-Browser-Client/dist --onefile
 
-    - name: Upload Memory Cache Hub Artifacts (One File)
-      uses: actions/upload-artifact@v2
-      with:
-        name: memory_cache_${{ runner.os }}_${{ github.sha }}
-        path: Memory-Cache-Hub/dist/memory_cache_hub
+      - name: Upload Memory Cache Hub Artifacts (One File)
+        uses: actions/upload-artifact@v2
+        with:
+          name: memory_cache_${{ runner.os }}_${{ github.sha }}
+          path: Memory-Cache-Hub/dist/memory_cache_hub
