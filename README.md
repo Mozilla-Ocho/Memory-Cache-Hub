@@ -16,15 +16,15 @@ Memory Cache Hub is designed to run on your own machine. All of your data is sto
 
 ## Installation
 
-To use Memory Cache:
+To use Memory Cache Hub:
 
 - Find the latest release for your platform (Windows, MacOS, or GNU/Linux).
 - Download the single-file executable or directory from the `Artifacts` section.
 - Run the executable. If you want to see streaming debug output, run the executable on the command line.
-- A new tab should open in your browser showing the Memory Cache GUI.
+- A new tab should open in your browser showing the Memory Cache Browser Client GUI.
 - If the GUI does not open automatically, you can navigate to [http://localhost:4444](http://localhost:444) in your browser.
 
-Each release build of Memory Cache Hub is a standalone executable that includes the browser client and all necessary assets. By "standalone", we mean that you do not need to install any additional software to use Memory Cache. 
+Each release build of Memory Cache Hub is a standalone executable that includes the browser client and all necessary assets. By "standalone", we mean that you do not need to install any additional software to use Memory Cache Hub. 
 
 ### Release Builds
 
@@ -53,11 +53,9 @@ If you want to build `memory-cache-hub` from source, you can follow the instruct
 
 Memory Cache consists of three separate components:
 
-- Memory Cache Hub
-- Memory Cache Browser Client
-- Memory Cache Firefox Extension
-
-This repository contains the source code for the Memory Cache Hub.
+- [Memory Cache Hub](https://github.com/Mozilla-Ocho/Memory-Cache-Hub?tab=readme-ov-file#memory-cache-hub) (this repo)
+- [Memory Cache Browser Client](https://github.com/Mozilla-Ocho/Memory-Cache-Browser-Client)
+- [Memory Cache Firefox Extension](https://github.com/Mozilla-Ocho/Memory-Cache)
 
 Release builds of Memory Cache Hub include the (pre-built) browser client assets so that the entire application can be run as a standalone executable. While developing Memory Cache Hub, you build and run the browser client separately (or not at all).
 
