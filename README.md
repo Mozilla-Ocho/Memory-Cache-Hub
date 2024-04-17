@@ -18,13 +18,32 @@ Memory Cache Hub is designed to run on your own machine. All of your data is sto
 
 To use Memory Cache:
 
-- Download the latest release for your platform (Windows, MacOS, or GNU/Linux)
-- Run the release executable. It will open a new tab in your browser showing the Memory Cache GUI.
+- Find the latest release for your platform (Windows, MacOS, or GNU/Linux) (in the section below).
+- Download the single-file executable or directory from the `Artifacts` section. (See the note below for more information.) 
+- Run the executable. (On MacOS and Windows, you may need to enable settings to allow unsigned/unverified packages.) If you want to see debug output, it is best to run the executable on the command line as there is no native GUI.
+- A new tab should open in your browser showing the Memory Cache GUI.
 - If the GUI does not open automatically, you can navigate to [http://localhost:4444](http://localhost:444) in your browser.
 
 Each release build of Memory Cache Hub is a standalone executable that includes the browser client and all necessary assets. By "standalone", we mean that you do not need to install any additional software to use Memory Cache. 
 
+### Release Builds
+
+Release builds can be downloaded from the `Artifacts` section of the following pages:
+
+- [Memory Cache Hub (Ubuntu)](https://github.com/Mozilla-Ocho/Memory-Cache-Hub/actions/runs/8723898292)
+- [Memory Cache Hub (Windows)](https://github.com/Mozilla-Ocho/Memory-Cache-Hub/actions/runs/8723898288)
+- [Memory Cache Hub (MacOS)](https://github.com/Mozilla-Ocho/Memory-Cache-Hub/actions/runs/8723898296)
+
+Release builds are available in two formats:
+
+- A single file executable, which is compact and easy to use but takes ~30 seconds to boot (because it unpacks supporting files at runtime).
+- A directory that includes an executable and supporting files. The executable included in this format boots instantly.
+
+### Firefox Browser Extension
+
 A Firefox browser extension for Memory Cache that extends its functionality is also available. More information can be found in the main [Memory Cache repository](https://github.com/Mozilla-Ocho/Memory-Cache).
+
+### Installing from source
 
 If you want to build `memory-cache-hub` from source, you can follow the instructions in the sections below.
 
