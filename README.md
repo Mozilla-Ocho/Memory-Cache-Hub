@@ -18,9 +18,9 @@ Memory Cache Hub is designed to run on your own machine. All of your data is sto
 
 To use Memory Cache:
 
-- Find the latest release for your platform (Windows, MacOS, or GNU/Linux) (in the section below).
-- Download the single-file executable or directory from the `Artifacts` section. (See the note below for more information.) 
-- Run the executable. (On MacOS and Windows, you may need to enable settings to allow unsigned/unverified packages.) If you want to see debug output, it is best to run the executable on the command line as there is no native GUI.
+- Find the latest release for your platform (Windows, MacOS, or GNU/Linux).
+- Download the single-file executable or directory from the `Artifacts` section.
+- Run the executable. If you want to see streaming debug output, run the executable on the command line.
 - A new tab should open in your browser showing the Memory Cache GUI.
 - If the GUI does not open automatically, you can navigate to [http://localhost:4444](http://localhost:444) in your browser.
 
@@ -38,6 +38,8 @@ Release builds are available in two formats:
 
 - A single file executable, which is compact and easy to use but takes ~30 seconds to boot (because it unpacks supporting files at runtime).
 - A directory that includes an executable and supporting files. The executable included in this format boots instantly.
+
+On MacOS and Windows, you may need to enable settings to allow unsigned/unverified packages. On Linux, you may need to `chmod +x`.
 
 ### Firefox Browser Extension
 
@@ -149,3 +151,10 @@ You may encounter an error similar to the following when running the release bui
 ```
 
 This error occurs when the build was made on a system with a newer version of `glibc` than the one on your system. Let us know if this happens to you because it means we need to build releases on an older system.
+
+### Memory Cache fails to start the Llamafile Server
+
+When you select an LLM from the models tab, Memory Cache should automatically download and run a `llamafile` (in server mode). If the `llamafile` server fails to start:
+
+- Check the server logs by running `Memory Cache Hub` from the command line.
+- Try to download and run a `llamafile` following the instructions in the [`llamafile README`](https://github.com/Mozilla-Ocho/llamafile?tab=readme-ov-file#llamafile). If you are still having trouble, check the ["Gotchas" section of `llamafile README`](https://github.com/Mozilla-Ocho/llamafile?tab=readme-ov-file#gotchas) for platform-specific troubleshooting tips. 
